@@ -20,6 +20,7 @@
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
 
+            <label for="email">Gender:</label>
             <input type="radio" name="gender" value="Male" required>
             <input type="radio" name="gender" value="Female">
 
@@ -35,7 +36,7 @@
     </div>
 
     <footer>
-        <p>&copy; 2023 IoTBay. All rights reserved.</p>
+        <p>&copy; IoTBay Team 5</p>
     </footer>
 </body>
 </html>
