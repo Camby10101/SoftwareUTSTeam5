@@ -1,3 +1,9 @@
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,28 +20,20 @@
     <div class="form-container">
         <h2>Register</h2>
         <form action="register" method="post">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-
-            <input type="radio" name="gender" value="Male" required>
-            <input type="radio" name="gender" value="Female">
-
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-
-            <label for="confirmPassword">Confirm Password:</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" required>
-
-            <button type="submit">Register</button>
+           <table> 
+            <tr><td> Email </td><td><input type="text" placeholder="Enter Email" name="email" required="True"></td></tr>
+            <tr><td> Full Name </td><td><input type="text" placeholder="Enter Full Name" name="name" required="True"></td></tr>
+            <tr><td> Password </td><td><input type="text" placeholder="Enter Password" name="Password" required="True"></td></tr>
+            <tr><td> Gender </td><td><input type="radio" placeholder="Enter Gender" name="Gender" required="True"></td></tr>
+            <tr><td> Favourite Colour </td><td><input type="text" placeholder="Enter Favourite Colour" name="Favourite Colour" required="True"> </td></tr>
+            <tr><td> Agree to TOS </td><td><input type="checkbox" name="name" required="True"></td></tr>
+           </table>
         </form>
         <p>Already have an account? <a href="login.jsp">Login here</a></p>
     </div>
 
     <footer>
-        <p>&copy; 2023 IoTBay. All rights reserved.</p>
+        <p>&copy; IoTBay Team 5</p>
     </footer>
 </body>
 </html>
