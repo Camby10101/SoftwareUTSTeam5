@@ -1,10 +1,4 @@
-<%-- 
-    Document   : IoTBay
-    Created on : 8 Mar. 2025, 9:31:38 pm
-    Author     : sarwa
---%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
