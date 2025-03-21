@@ -1,10 +1,9 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>IoTBay - Register</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="CSS/styles.css">
 </head>
 <body>
     <header>
@@ -14,26 +13,28 @@
 
     <div class="form-container">
         <h2>Register</h2>
-        <form action="register" method="post">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-
-            <label for="confirmPassword">Confirm Password:</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" required>
-
-            <button type="submit">Register</button>
-        </form>
+        <form action="welcome.jsp" method="post">
+            Email: <input type="email" name="email" required><br><br>
+            Full Name: <input type="text" name="fullName" required><br><br>
+            Password: <input type="password" name="password" required><br><br>
+            Gender:
+            <input type="radio" name="gender" value="Male" required> Male
+            <input type="radio" name="gender" value="Female"> Female<br><br>
+            Favourite Colour:
+            <select name="favouriteColour" required>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+            <option value="yellow">Yellow</option>
+            </select><br><br>
+            Agree to TOS: <input type="checkbox" name="agreeTOS" required><br><br>
+            <input type="submit" value="Register">
+            </form>
         <p>Already have an account? <a href="login.jsp">Login here</a></p>
     </div>
 
     <footer>
-        <p>&copy; 2023 IoTBay. All rights reserved.</p>
+        <p>&copy; IoTBay Team 5</p>
     </footer>
 </body>
 </html>
