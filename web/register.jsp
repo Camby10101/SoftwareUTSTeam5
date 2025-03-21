@@ -1,15 +1,9 @@
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>IoTBay - Register</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="CSS/styles.css">
 </head>
 <body>
     <header>
@@ -19,16 +13,23 @@
 
     <div class="form-container">
         <h2>Register</h2>
-        <form action="register" method="post">
-           <table> 
-            <tr><td> Email </td><td><input type="text" placeholder="Enter Email" name="email" required="True"></td></tr>
-            <tr><td> Full Name </td><td><input type="text" placeholder="Enter Full Name" name="name" required="True"></td></tr>
-            <tr><td> Password </td><td><input type="text" placeholder="Enter Password" name="Password" required="True"></td></tr>
-            <tr><td> Gender </td><td><input type="radio" placeholder="Enter Gender" name="Gender" required="True"></td></tr>
-            <tr><td> Favourite Colour </td><td><input type="text" placeholder="Enter Favourite Colour" name="Favourite Colour" required="True"> </td></tr>
-            <tr><td> Agree to TOS </td><td><input type="checkbox" name="name" required="True"></td></tr>
-           </table>
-        </form>
+        <form action="welcome.jsp" method="post">
+            Email: <input type="email" name="email" required><br><br>
+            Full Name: <input type="text" name="fullName" required><br><br>
+            Password: <input type="password" name="password" required><br><br>
+            Gender:
+            <input type="radio" name="gender" value="Male" required> Male
+            <input type="radio" name="gender" value="Female"> Female<br><br>
+            Favourite Colour:
+            <select name="favouriteColour" required>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+            <option value="yellow">Yellow</option>
+            </select><br><br>
+            Agree to TOS: <input type="checkbox" name="agreeTOS" required><br><br>
+            <input type="submit" value="Register">
+            </form>
         <p>Already have an account? <a href="login.jsp">Login here</a></p>
     </div>
 
