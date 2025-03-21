@@ -2,7 +2,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Welcome</title>
+    <meta charset="UTF-8">
+    <title>IoTBay - Home</title>
+    <link rel="stylesheet" type="text/css" href="CSS/styles.css">
 </head>
 <body>
 <%
