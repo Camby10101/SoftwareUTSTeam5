@@ -1,11 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoTBay - Register</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
+    <script>
+        // Function to validate the form
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return false; // Prevent form submission
+            }
+            return true; // Allow form submission
+        }
+
+        // Function to store the username in sessionStorage and redirect
+        function storeUsername() {
+            const username = document.getElementById('username').value;
+            if (username) {
+                // Store the username in sessionStorage
+                sessionStorage.setItem('username', username);
+                window.location.href = "index.html";  // Redirect to the index page
+            }
+        }
+
+        // Combined function to validate and then store the username and redirect
+        function validateAndStore(event) {
+            event.preventDefault(); // Prevent the form from submitting
+
+            // Validate the form
+            if (validateForm()) {
+                // If validation passes, store the username and redirect
+                storeUsername();
+            }
+        }
+    </script>
 </head>
+
 <body>
     <header>
         <h1>IoTBay</h1>
@@ -14,7 +51,7 @@
 
     <div class="form-container">
         <h2>Register</h2>
-        <form action="register" method="post">
+        <form onsubmit="validateAndStore(event)">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
 
@@ -29,11 +66,13 @@
 
             <button type="submit">Register</button>
         </form>
-        <p>Already have an account? <a href="login.jsp">Login here</a></p>
+        <p>Already have an account? <a href="login.html">Login here</a></p>
     </div>
 
     <footer>
         <p>&copy; 2023 IoTBay. All rights reserved.</p>
     </footer>
 </body>
+
 </html>
+

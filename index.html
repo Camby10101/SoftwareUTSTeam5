@@ -1,13 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>IotBay</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
-        <div>IoTBay</div>
-        <div>Welcome</div>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoTBay - Home</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script>
+        // Function to retrieve the username from sessionStorage and display the welcome message
+        function displayWelcomeMessage() {
+            const username = sessionStorage.getItem('username');
+            if (username) {
+                // Display the welcome message
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
+            } else {
+                // If username not found, redirect to the register page
+                window.location.href = "register.html";
+            }
+        }
+    </script>
+</head>
+<body onload="displayWelcomeMessage()">
+    <header>
+        <h1>IoTBay</h1>
+        <p>Your one-stop shop for IoT products</p>
+    </header>
+
+    <div class="welcome-container">
+        <h2 id="welcomeMessage">Welcome!</h2>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 IoTBay. All rights reserved.</p>
+    </footer>
+</body>
 </html>
+
