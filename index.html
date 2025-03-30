@@ -13,21 +13,80 @@
                 // Display the welcome message
                 document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
             } else {
-                // If username not found, redirect to the register page
-                window.location.href = "register.html";
+               //stay within the index page
+                
             }
         }
     </script>
 </head>
 <body onload="displayWelcomeMessage()">
-    <header>
-        <h1>IoTBay</h1>
-        <p>Your one-stop shop for IoT products</p>
+    <header class="header-container">
+        <div class="header-img">
+            <img src="iot.png" alt="IoTBay Logo" class="logo"> 
+        </div>
+        <div class="header-title">
+            <h1>IoTBay</h1>
+        </div>
+        <form class="search-form">
+            <label for="search-input" class="search-label">Search:</label>
+            <input type="text" id="search-input" placeholder="Search...">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+        <nav class="index-nav">
+            <ul>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="product.html">Shop</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="cart">Cart</a></li>
+            </ul>
+        </nav>
     </header>
+    
+    
 
     <div class="welcome-container">
         <h2 id="welcomeMessage">Welcome!</h2>
     </div>
+    
+     <div id="Shop-msg">
+        
+     <h3> Most Popular Products </h3>
+    
+    
+    
+    </div>
+
+    <div class="card-container">
+        <div class="card">
+            <img src="IOTSensor.webp">
+            <div class="card-content">
+                <h4>Iot Sensor</h4>
+                <p>This iot based sensor has can be used to detect motion.
+                    its commonly used in the manufacturing of goods.
+                </p>
+                <a href="#" class="btn">Read More</a>
+            </div>
+        </div>
+    
+        <div class="card">
+            <img src="Sony-TV.webp">
+            <div class="card-content">
+                <h4>Sony 4K Google Tv </h4>
+                <p>Powered by Google tv using Iot it intergates voice control and apps in one place.  </p>
+                <a href="#" class="btn">Read More</a>
+            </div>
+        </div>
+    
+        <div class="card">
+            <img src="IotEmbeddedSystem.webp">
+            <div class="card-content">
+                <h4>Hardware</h4>
+                <p> Iot embedded chip for devices that need hardware</p>
+                <a href="#" class="btn">Read More</a>
+            </div>
+        </div>
+    </div>
+    
 
     <footer>
         <p>&copy; 2023 IoTBay. All rights reserved.</p>

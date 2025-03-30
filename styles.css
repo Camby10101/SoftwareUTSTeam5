@@ -7,25 +7,8 @@ body {
     line-height: 1.6;
 }
 
-header {
-    background-color: #2c3e50;
-    color: #ecf0f1;
-    padding: 30px 20px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
 
-header h1 {
-    margin: 0;
-    font-size: 2.8em;
-    font-weight: 600;
-}
 
-header p {
-    margin: 10px 0 0;
-    font-size: 1.2em;
-    color: #bdc3c7;
-}
 
 /* Product Container */
 .product-container {
@@ -105,4 +88,165 @@ footer {
     bottom: 0;
     width: 100%;
     font-size: 0.9em;
+}
+/* General Reset */
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.header-container {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: sans-serif;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Logo Area */
+.header-img {
+    display: flex;
+    align-items: center;
+}
+
+.header-img img.logo {
+    height: 40px;
+    margin-right: 20px;
+}
+
+/* Title Area */
+.header-title h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: #007bff;
+    font-size: 2em;
+    margin: 0;
+}
+
+/* Search Form */
+.search-form {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+.search-label {
+    margin-right: 5px;
+    font-weight: bold;
+    display: none;
+}
+
+.search-input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 30px; /* Add margin to the right of the input */
+}
+
+.search-button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: #0056b3;
+}
+
+/* Navigation Area */
+.index-nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.index-nav li {
+    margin-left: 20px;
+}
+
+.index-nav a {
+    text-decoration: none;
+    color: #333;
+    font-size: 1em;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.index-nav a:hover {
+    color: #007bff;
+}
+
+#welcomeMessage{
+    
+margin-left: 20px;
+}
+
+.card-container {
+    display: flex;
+    justify-content: center; 
+    flex-wrap: wrap; 
+    margin-top: 100px; 
+    gap: 20px; 
+}
+
+.card {
+    width: 325px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    margin: 20px; 
+}
+
+.card img {
+    width: 100%;
+    height: auto;
+}
+
+.card-content  {
+    padding:16px;
+}
+
+.card-content p{
+
+    color:#666;
+    font-size: 15px;
+    line-height: 1.3;
+
+}
+.card-content h4 {
+
+font-size: 28px;
+margin: bottom 8px;;
+
+
+}
+.card-content .btn{
+
+    display:inline-block;
+    padding: 8px 16px;
+    background-color: #333;
+    text-decoration: none;
+    border-radius:4px;
+    margin-top: 16px;
+    color: white;
+
+}
+#Shop-msg {
+
+text-align: center;
+
+
 }
