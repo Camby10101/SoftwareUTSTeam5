@@ -6,11 +6,27 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>IoTBay</h1>
-        <p>Your one-stop shop for IoT products</p>
+    <header class="header-container">
+        <div class="header-img">
+            <img src="iot.png" alt="IoTBay Logo" class="logo">
+        </div>
+        <div class="header-title">
+            <h1>IoTBay</h1>
+        </div>
+        <form class="search-form">
+            <label for="search-input" class="search-label">Search:</label>
+            <input type="text" id="search-input" placeholder="Search...">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+        <nav class="index-nav">
+            <ul>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="product.html">Shop</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="login.html">Logout</a></li>
+            </ul>
+        </nav>
     </header>
-
     <div class="form-container">
         <h2>Login</h2>
         <form id="loginForm">
