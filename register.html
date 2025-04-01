@@ -1,52 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoTBay - Register</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    
+
     <script>
-        // Function to validate the form
         function validateForm() {
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
-            // Check if passwords match
             if (password !== confirmPassword) {
                 alert("Passwords do not match!");
-                return false; // Prevent form submission
+                return false;
             }
-            return true; // Allow form submission
+            return true;
         }
 
-        // Function to store the username in sessionStorage and redirect
-        function storeUsername() {
+        function storeUserData() {
             const username = document.getElementById('username').value;
-            if (username) {
-                // Store the username in sessionStorage
+            const password = document.getElementById('password').value; // Get the password\
+            const email = document.getElementById('email').value;
+
+            if (username && password) {
                 sessionStorage.setItem('username', username);
-                window.location.href = "index.html";  // Redirect to the index page
+                sessionStorage.setItem('password', password); // Store the password
+                sessionStorage.setItem('email', email );
+                window.location.href = "login.html"; // Redirect to login page.
             }
         }
 
-        // Combined function to validate and then store the username and redirect
         function validateAndStore(event) {
-            event.preventDefault(); // Prevent the form from submitting
+            event.preventDefault();
 
-            // Validate the form
             if (validateForm()) {
-                // If validation passes, store the username and redirect
-                storeUsername();
+                storeUserData();
             }
         }
     </script>
 </head>
 
 <body>
-    <header>
-        <h1>IoTBay</h1>
-        <p>Your one-stop shop for IoT products</p>
+    <header class="header-container">
+        <div class="header-img">
+            <img src="Logo.png" alt="IoTBay Logo" class="logo">
+        </div>
+        <div class="header-title">
+            <h1>IoTBay</h1>
+        </div>
+        <form class="search-form">
+            <label for="search-input" class="search-label">Search:</label>
+            <input type="text" id="search-input" placeholder="Search...">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+        <nav class="index-nav">
+            <ul>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="product.html">Shop</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="logout.html">Logout</a></li>
+            </ul>
+        </nav>
     </header>
 
     <div class="form-container">
@@ -70,8 +87,42 @@
     </div>
 
     <footer>
-        <p>&copy; 2023 IoTBay. All rights reserved.</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: support@iotbay.com</p>
+                <p>Phone: 1-800-IOT-BAY</p>
+            </div>
+            <div class="footer-section">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="/contact">Contact Us</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/shipping-returns">Shipping & Returns</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#"><img src="facebook-icon.png" alt="Facebook"></a>
+                    <a href="#"><img src="twitter-icon.png" alt="Twitter"></a>
+                    <a href="#"><img src="instagram-icon.png" alt="Instagram"></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 IoTBay. All rights reserved.</p>
+        </div>
     </footer>
+    
 </body>
 
 </html>

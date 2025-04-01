@@ -6,26 +6,26 @@
     <title>IoTBay - Home</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
     <script>
-        // Function to retrieve the username from sessionStorage and display the welcome message
         function displayWelcomeMessage() {
             const username = sessionStorage.getItem('username');
             if (username) {
-                // Display the welcome message
                 document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
-            } else {
-               //stay within the index page
-                
             }
         }
+
+
+        
+    
     </script>
 </head>
 <body onload="displayWelcomeMessage()">
     <header class="header-container">
         <div class="header-img">
-            <img src="iot.png" alt="IoTBay Logo" class="logo"> 
+            <a href="index.html"> <img src="Logo.png" alt="IoTBay Logo" class="logo">
+            </a>
         </div>
         <div class="header-title">
-            <h1>IoTBay</h1>
+            <h1>IOT-BAY</h1>
         </div>
         <form class="search-form">
             <label for="search-input" class="search-label">Search:</label>
@@ -37,7 +37,7 @@
                 <li><a href="register.html">Register</a></li>
                 <li><a href="product.html">Shop</a></li>
                 <li><a href="login.html">Login</a></li>
-                <li><a href="cart">Cart</a></li>
+                <li><a href="logout.html">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -47,8 +47,15 @@
     <div class="welcome-container">
         <h2 id="welcomeMessage">Welcome!</h2>
     </div>
+
+    <div class="Hero-section">
+        <h1>Smart Living Starts Here</h1>
+        <p>Your one-stop shop for smart devices that make life easier.</p>
+        <button>Shop Products</button>
+    </div>
     
-     <div id="Shop-msg">
+    
+    <div id="Shop-msg">
         
      <h3> Most Popular Products </h3>
     
@@ -86,11 +93,70 @@
             </div>
         </div>
     </div>
+
+    <div class="about-heading">
+        <h1> About us </h1>
+            <p> IoT (Internet of Things) products are devices that seamlessly connect with each other to create smarter environments. Used worldwide, they make everyday tasks easier and more efficient."
+            </p>
+    </div>
+    <div class="about-container">
+
+        <section class="about">
+            <div class="about-img">
+                <img src="connectivity.avif" alt="connect">
+            </div>
+        <div class="about-content">
+            <h2> Embrace the future </h2>
+            <p> The world of technology is evolving at a rapid pace, and so is the way we interact with it. At IoT Bay, we’re dedicated to improving our customers' lives by providing a user-friendly platform that promotes productivity, education, and enjoyment. Through our e-commerce application, we aim to make the latest technology accessible, helping customers stay up to date with cutting-edge IoT innovations that enhance their daily lives.
+                
+            </p>
+        </div>
+        </section>
+
+    </div>
     
 
     <footer>
-        <p>&copy; 2023 IoTBay. All rights reserved.</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: support@iotbay.com</p>
+                <p>Phone: 1-800-IOT-BAY</p>
+            </div>
+            <div class="footer-section">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="/contact">Contact Us</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/shipping-returns">Shipping & Returns</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#"><p>Facebook </p></a>
+                    <a href="#"><p>Twitter </p></a>
+                    <a href="#"><p>Instagram </p></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 IoTBay. All rights reserved.</p>
+        </div>
     </footer>
+    
 </body>
 </html>
+
+// remove the welcome unless a user is already logged in
+
+
 
