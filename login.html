@@ -84,12 +84,12 @@
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault(); // Prevent default form submission
     
-            let inputname = document.getElementById('username').value;
-            const storedUsername = sessionStorage.getItem('username');
+            let email = document.getElementById('email').value;
+            const storedemail= sessionStorage.getItem('email');
             let inputpassword = document.getElementById('password').value;
             const storedPassword = sessionStorage.getItem('password');
     
-            if (inputname === storedUsername && inputpassword === storedPassword) {
+            if (email === storedemail && inputpassword === storedPassword) {
                 window.location.href = 'index.html';
             } else {
                 
@@ -98,6 +98,6 @@
             }
         });
     </script>
-   
+
 </body>
 </html>
