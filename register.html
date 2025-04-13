@@ -5,42 +5,9 @@
     <title>IoTBay - Register</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
-<body>
     
 
-    <script>
-        function validateForm() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            if (password !== confirmPassword) {
-                alert("Passwords do not match!");
-                return false;
-            }
-            return true;
-        }
-
-        function storeUserData() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value; // Get the password\
-            const email = document.getElementById('email').value;
-
-            if (username && password) {
-                sessionStorage.setItem('username', username);
-                sessionStorage.setItem('password', password); // Store the password
-                sessionStorage.setItem('email', email );
-                window.location.href = "login.html"; // Redirect to login page.
-            }
-        }
-
-        function validateAndStore(event) {
-            event.preventDefault();
-
-            if (validateForm()) {
-                storeUserData();
-            }
-        }
-    </script>
+   
 </head>
 
 <body>
@@ -122,7 +89,39 @@
             <p>&copy; 2023 IoTBay. All rights reserved.</p>
         </div>
     </footer>
-    
+    <script>
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return false;
+            }
+            return true;
+        }
+
+        function storeUserData() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value; // Get the password\
+            const email = document.getElementById('email').value;
+
+            if (username && password) {
+                sessionStorage.setItem('username', username);
+                sessionStorage.setItem('password', password); // Store the password
+                sessionStorage.setItem('email', email );
+                window.location.href = "login.html"; // Redirect to login page.
+            }
+        }
+
+        function validateAndStore(event) {
+            event.preventDefault();
+
+            if (validateForm()) {
+                storeUserData();
+            }
+        }
+    </script>
 </body>
 
 </html>

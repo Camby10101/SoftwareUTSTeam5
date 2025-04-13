@@ -5,18 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoTBay - Home</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <script>
-        function displayWelcomeMessage() {
-            const username = sessionStorage.getItem('username');
-            if (username) {
-                document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
-            }
-        }
-
-
-        
     
-    </script>
 </head>
 <body onload="displayWelcomeMessage()">
     <header class="header-container">
@@ -152,11 +141,23 @@
             <p>&copy; 2023 IoTBay. All rights reserved.</p>
         </div>
     </footer>
+   
+   <script>
+        function displayWelcomeMessage() {
+            const username = sessionStorage.getItem('username');
+            if (username) {
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
+            }
+        }
+
+
+        
     
+    </script>
 </body>
 </html>
 
-// remove the welcome unless a user is already logged in
+
 
 
 

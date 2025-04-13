@@ -5,24 +5,7 @@
     <title>IoTBay - Login</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
-<script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // Prevent default form submission
 
-        let inputname = document.getElementById('username').value;
-        const storedUsername = sessionStorage.getItem('username');
-        let inputpassword = document.getElementById('password').value;
-        const storedPassword = sessionStorage.getItem('password');
-
-        if (inputname === storedUsername && inputpassword === storedPassword) {
-            window.location.href = 'index.html';
-        } else {
-            
-            alert('Incorrect username or password.');
-            
-        }
-    });
-</script>
 <body>
     <header class="header-container">
         <div class="header-img">
@@ -96,6 +79,25 @@
             <p>&copy; 2023 IoTBay. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission
+    
+            let inputname = document.getElementById('username').value;
+            const storedUsername = sessionStorage.getItem('username');
+            let inputpassword = document.getElementById('password').value;
+            const storedPassword = sessionStorage.getItem('password');
+    
+            if (inputname === storedUsername && inputpassword === storedPassword) {
+                window.location.href = 'index.html';
+            } else {
+                
+                alert('Incorrect username or password.');
+                
+            }
+        });
+    </script>
    
 </body>
 </html>
