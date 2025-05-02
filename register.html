@@ -1,52 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoTBay - Register</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <script>
-        // Function to validate the form
-        function validateForm() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+</head>
+    
 
-            // Check if passwords match
-            if (password !== confirmPassword) {
-                alert("Passwords do not match!");
-                return false; // Prevent form submission
-            }
-            return true; // Allow form submission
-        }
-
-        // Function to store the username in sessionStorage and redirect
-        function storeUsername() {
-            const username = document.getElementById('username').value;
-            if (username) {
-                // Store the username in sessionStorage
-                sessionStorage.setItem('username', username);
-                window.location.href = "index.html";  // Redirect to the index page
-            }
-        }
-
-        // Combined function to validate and then store the username and redirect
-        function validateAndStore(event) {
-            event.preventDefault(); // Prevent the form from submitting
-
-            // Validate the form
-            if (validateForm()) {
-                // If validation passes, store the username and redirect
-                storeUsername();
-            }
-        }
-    </script>
+   
 </head>
 
 <body>
     <header class="header-container">
         <div class="header-img">
-            <img src="iot.png" alt="IoTBay Logo" class="logo">
+            <a href="index.html"> <img src="Logo.png" alt="IoTBay Logo" class="logo"></a>
         </div>
         <div class="header-title">
             <h1>IoTBay</h1>
@@ -61,7 +28,7 @@
                 <li><a href="register.html">Register</a></li>
                 <li><a href="product.html">Shop</a></li>
                 <li><a href="login.html">Login</a></li>
-                <li><a href="login.html">Logout</a></li>
+                <li><a href="logout.html">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -87,8 +54,74 @@
     </div>
 
     <footer>
-        <p>&copy; 2023 IoTBay. All rights reserved.</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: support@iotbay.com</p>
+                <p>Phone: 1-800-IOT-BAY</p>
+            </div>
+            <div class="footer-section">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="/contact">Contact Us</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/shipping-returns">Shipping & Returns</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#"><img src="facebook-icon.png" alt="Facebook"></a>
+                    <a href="#"><img src="twitter-icon.png" alt="Twitter"></a>
+                    <a href="#"><img src="instagram-icon.png" alt="Instagram"></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 IoTBay. All rights reserved.</p>
+        </div>
     </footer>
+    <script>
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return false;
+            }
+            return true;
+        }
+
+        function storeUserData() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value; // Get the password\
+            const email = document.getElementById('email').value;
+
+            if (username && password) {
+                sessionStorage.setItem('username', username);
+                sessionStorage.setItem('password', password); // Store the password
+                sessionStorage.setItem('email', email );
+                window.location.href = "index.html"; // Redirect to login page.
+            }
+        }
+
+        function validateAndStore(event) {
+            event.preventDefault();
+
+            if (validateForm()) {
+                storeUserData();
+            }
+        }
+    </script>
 </body>
 
 </html>

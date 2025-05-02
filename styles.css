@@ -17,7 +17,7 @@ body {
     justify-content: center;
     text-align: center;
     color: white;
-    background: url("herosection.jpg") no-repeat center center/cover;
+    background: url("Iot.gif") no-repeat center center/cover;
 }
 
 /* Dark overlay to improve text visibility */
@@ -271,7 +271,7 @@ footer li {
     padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin-right: 30px; /* Add margin to the right of the input */
+    margin-right: 20px; /* Adjust to your desired spacing */
 }
 
 .search-button {
@@ -282,6 +282,7 @@ footer li {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-left: 20px;
 }
 
 .search-button:hover {
@@ -321,6 +322,7 @@ footer li {
     font-size: 2em;
     font-weight: 600;
     margin-bottom: 10px; /* Reduced margin */
+    color: #007bff;
 }
 
 .card-container {
@@ -380,7 +382,6 @@ footer li {
     background-color: #0056b3;
 }
 .about-heading{
-
 width: 90%;
 display:flex;
 justify-content: center;
@@ -438,4 +439,65 @@ margin: 20px auto;
     margin-top: 20px;
 }
 
+.about-heading {
+    text-align: center;
+    padding: 60px 20px; /* Increased padding */
+    background-color: #f8f8f8;
+}
+
+.about-heading h1 {
+    font-size: 2.8em; /* Slightly larger heading */
+    margin-bottom: 30px; /* Increased margin */
+    color: #007bff; /* Blue heading color */
+}
+
+.about-heading p {
+    font-size: 1.2em; /* Slightly larger paragraph */
+    line-height: 1.8; /* Increased line height */
+    color: #666;
+    max-width: 900px; /* Wider text area */
+    margin: 0 auto 20px; /* Added bottom margin */
+}
+
+.about-container {
+    padding: 60px 20px; /* Increased padding */
+}
+
+.about {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 40px; /* Increased gap */
+}
+
+.about-img {
+    flex: 1 1 400px; /* Increased width */
+    margin-right: 0; /* Removed margin */
+}
+
+.about-img img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px; /* Slightly more rounded corners */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Stronger shadow */
+}
+
+.about-content {
+    flex: 1 1 300px; /* Increased width */
+}
+
+.about-content h2 {
+    font-size: 2.4em; /* Slightly larger heading */
+    margin-bottom: 25px; /* Increased margin */
+    color: #007bff; /* Blue heading color */
+}
+
+.about-content p {
+    font-size: 1.2em; /* Slightly larger paragraph */
+    line-height: 1.8; /* Increased line height */
+    color: #666;
+}
 

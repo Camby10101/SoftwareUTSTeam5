@@ -5,27 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoTBay - Home</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <script>
-        
-        function displayWelcomeMessage() {
-            const username = sessionStorage.getItem('username');
-            if (username) {
-                
-                document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
-            } else {
-            
-                
-            }
-        }
-    </script>
+
 </head>
 <body onload="displayWelcomeMessage()">
     <header class="header-container">
         <div class="header-img">
-            <img src="iot.png" alt="IoTBay Logo" class="logo"> 
+            <a href="index.html"> <img src="Logo.png" alt="IoTBay Logo" class="logo">
+            </a>
         </div>
         <div class="header-title">
-            <h1>IoTBay</h1>
+            <h1>IOT-BAY</h1>
         </div>
         <form class="search-form">
             <label for="search-input" class="search-label">Search:</label>
@@ -37,7 +26,8 @@
                 <li><a href="register.html">Register</a></li>
                 <li><a href="product.html">Shop</a></li>
                 <li><a href="login.html">Login</a></li>
-                <li><a href="login.html">Logout</a></li>
+
+                <li><a href="logout.html">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -53,8 +43,6 @@
         <p>Your one-stop shop for smart devices that make life easier.</p>
         <button>Shop Products</button>
     </div>
-    
-    
     <div id="Shop-msg">
         
      <h3> Most Popular Products </h3>
@@ -96,21 +84,18 @@
 
     <div class="about-heading">
         <h1> About us </h1>
-            <p> Internet of thing's (iot) products are devices that can connect.
-                They are used worldwide daily to make your life easier.
+            <p> IoT (Internet of Things) products are devices that seamlessly connect with each other to create smarter environments. Used worldwide, they make everyday tasks easier and more efficient."
             </p>
     </div>
     <div class="about-container">
 
         <section class="about">
             <div class="about-img">
-                <img src="#">
+                <img src="connectivity.avif" alt="connect">
             </div>
         <div class="about-content">
             <h2> Embrace the future </h2>
-            <p> Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Quo voluptas modi, autem rerum itaque soluta placeat provident blanditiis quis, nemo animi debitis, voluptatum iusto tenetur quae reiciendis.
-                Ratione, placeat libero.
+            <p> The world of technology is evolving at a rapid pace, and so is the way we interact with it. At IoT Bay, we’re dedicated to improving our customers' lives by providing a user-friendly platform that promotes productivity, education, and enjoyment. Through our e-commerce application, we aim to make the latest technology accessible, helping customers stay up to date with cutting-edge IoT innovations that enhance their daily lives.
             </p>
         </div>
         </section>
@@ -154,7 +139,22 @@
             <p>&copy; 2023 IoTBay. All rights reserved.</p>
         </div>
     </footer>
+   <script>
+        function displayWelcomeMessage() {
+            const username = sessionStorage.getItem('username');
+            if (username) {
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
+            }
+        }
+
+
+        
     
+    </script>
 </body>
 </html>
+
+
+
+
 
