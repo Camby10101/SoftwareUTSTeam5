@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoTBay - Home</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-    
+
 </head>
 <body onload="displayWelcomeMessage()">
     <header class="header-container">
@@ -26,6 +26,7 @@
                 <li><a href="register.html">Register</a></li>
                 <li><a href="product.html">Shop</a></li>
                 <li><a href="login.html">Login</a></li>
+
                 <li><a href="logout.html">Logout</a></li>
             </ul>
         </nav>
@@ -42,8 +43,6 @@
         <p>Your one-stop shop for smart devices that make life easier.</p>
         <button>Shop Products</button>
     </div>
-    
-    
     <div id="Shop-msg">
         
      <h3> Most Popular Products </h3>
@@ -97,7 +96,6 @@
         <div class="about-content">
             <h2> Embrace the future </h2>
             <p> The world of technology is evolving at a rapid pace, and so is the way we interact with it. At IoT Bay, we’re dedicated to improving our customers' lives by providing a user-friendly platform that promotes productivity, education, and enjoyment. Through our e-commerce application, we aim to make the latest technology accessible, helping customers stay up to date with cutting-edge IoT innovations that enhance their daily lives.
-                
             </p>
         </div>
         </section>
@@ -131,9 +129,9 @@
             <div class="footer-section">
                 <h4>Follow Us</h4>
                 <div class="social-icons">
-                    <a href="#"><p>Facebook </p></a>
-                    <a href="#"><p>Twitter </p></a>
-                    <a href="#"><p>Instagram </p></a>
+                    <a href="#"><img src="facebook-icon.png" alt="Facebook"></a>
+                    <a href="#"><img src="twitter-icon.png" alt="Twitter"></a>
+                    <a href="#"><img src="instagram-icon.png" alt="Instagram"></a>
                 </div>
             </div>
         </div>
@@ -141,7 +139,6 @@
             <p>&copy; 2023 IoTBay. All rights reserved.</p>
         </div>
     </footer>
-   
    <script>
         function displayWelcomeMessage() {
             const username = sessionStorage.getItem('username');
