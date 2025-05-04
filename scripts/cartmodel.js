@@ -1,5 +1,3 @@
-package model;
-
-public class cartmodel {
+class cartmodel {
 
 }
