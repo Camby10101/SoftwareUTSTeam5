@@ -503,11 +503,10 @@ margin: 20px auto;
 
 /* Cart section */
 .cart-container {
-    padding-left: 50px;
+    padding-left: 30px;
     padding-right: 100px;
-    padding-top: 20px; 
+    padding-top: 10px; 
     padding-bottom: 5px;
-    border-bottom: 1px solid #eee ;
 }
 
 .cart-item {
@@ -536,7 +535,7 @@ margin: 20px auto;
 }
 
 .cart-summary {
-    padding: 20px;
+    padding: 35px;
 }
 
 .cart-summary p {
