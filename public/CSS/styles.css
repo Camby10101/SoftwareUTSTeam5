@@ -12,6 +12,11 @@ body {
     border-radius: 5px;
 }
 
+.item {
+        display: inline-block;
+        margin-right: 10px; /* Optional spacing */
+}
+
 .Hero-section {
     position: relative;
     width: 100%;
@@ -373,6 +378,19 @@ footer li {
 }
 
 .btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.item-btn {
     background-color: #007bff;
     color: white;
     border: none;
