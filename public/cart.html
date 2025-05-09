@@ -2,17 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>IoTBay - Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoTBay - Home</title>
     <link rel="stylesheet" type="text/css" href="CSS/styles.css">
-</head>
 
-<body>
+</head>
+<body onload="displayWelcomeMessage()">
     <header class="header-container">
         <div class="header-img">
-            <a href="index.html"><img src="images/Logo.png" alt="IoTBay Logo" class="logo"></a>
+            <a href="index.html"> <img src="images/Logo.png" alt="IoTBay Logo" class="logo">
+            </a>
         </div>
         <div class="header-title">
-            <h1>IoTBay</h1>
+            <h1>IOT-BAY</h1>
         </div>
         <form class="search-form">
             <label for="search-input" class="search-label">Search:</label>
@@ -29,26 +31,42 @@
             </ul>
         </nav>
     </header>
-
-    <div class="form-container">
-        <h2>Register</h2>
-        <form onsubmit="storeUserData(event)">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-
-            <label for="confirmPassword">Confirm Password:</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" required>
-
-            <button type="submit">Register</button>
-        </form>
-        <p>Already have an account? <a href="login.html">Login here</a></p>
+    
+    <div>
+        <h2>Your Cart</h2>
+        <div class="cart-container">
+            <div class="cart-item">
+                <img src="images/IotEmbeddedSystem.webp">
+                <div class="item-description">
+                    <p>IOT Sensor something something</p>
+                    <p>$300.00</p>
+                    <button>REMOVE</button>
+                    <button>- 1 +</button>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <div>
+        <div class="cart-container">
+            <div class="cart-item">
+                <img src="images/IotEmbeddedSystem.webp">
+                <div class="item-description">
+                    <p>IOT Sensor something something</p>
+                    <p>$300.00</p>
+                    <button>REMOVE</button>
+                    <button>- 1 +</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cart-summary">
+        <p>Subtotal: $</p>
+        <a href="product.html"><button>Continue Shopping</button></a>
+        <a href="checkout.html"><button>Checkout</button></a>
+    </div>
+
 
     <footer>
         <div class="footer-content">
@@ -86,49 +104,22 @@
             <p>&copy; 2025 IoTBay. All rights reserved.</p>
         </div>
     </footer>
-
-    <script>
-        function validateForm() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            if (password !== confirmPassword) {
-                alert("Passwords do not match!");
-                return false;
+   <script>
+        function displayWelcomeMessage() {
+            const username = sessionStorage.getItem('username');
+            if (username) {
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
             }
-            return true;
         }
 
+
+        
     
-        async function storeUserData(event) {
-  event.preventDefault(); // Good: prevents the default browser form submission
-
-  // Validate passwords match
-  if (validateForm()) {
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    const userData = { username, email, password };
-
-    const response = await fetch('/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData)
-    });
-
-    const result = await response.json();
-    if (result.success) {
-      window.location.href = "index.html";
-    } else {
-      alert(result.message);
-    }
-  }
-}
-
     </script>
 </body>
 </html>
+
+
+
+
 

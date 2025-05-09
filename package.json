@@ -21,6 +21,7 @@
   "dependencies": {
     "express": "^5.1.0",
     "mysql2": "^3.14.1",
-    "open": "^10.1.2"
+    "open": "^10.1.2",
+    "softwareutsteam5-7": "file:"
   }
 }

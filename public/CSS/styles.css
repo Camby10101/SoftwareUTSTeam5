@@ -17,7 +17,7 @@ body {
     justify-content: center;
     text-align: center;
     color: white;
-    background: url("Iot.gif") no-repeat center center/cover;
+    background: url("../images/Iot.gif") no-repeat center center/cover;
 }
 
 /* Dark overlay to improve text visibility */
