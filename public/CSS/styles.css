@@ -401,18 +401,49 @@ footer li {
     transition: background-color 0.3s ease;
 }
 
+.middle-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    margin-right: 10px;    
+}
+
+.button-container {
+    display: flex;                /* Use Flexbox for centering */
+    justify-content: center;      /* Center horizontally */
+    align-items: center;          /* Center vertically */
+    height: 10vh;                /* Full viewport height */
+    margin: 0;                    /* Remove default margin */
+}
+
 .btn:hover {
     background-color: #0056b3;
 }
-.about-heading{
 
-width: 90%;
-display:flex;
-justify-content: center;
-align-items: center;
-flex-direction: column;
-text-align: center;
-margin: 20px auto;
+.centered-text {
+    display: flex;                
+    justify-content: center;      
+    align-items: center;          
+    height: 50vh;                
+    font-size: 4em;               
+    text-align: center;           
+    margin: 0;                    
+}
+
+.about-heading{
+    width: 90%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    margin: 20px auto;
 }
 
 .form-container {
