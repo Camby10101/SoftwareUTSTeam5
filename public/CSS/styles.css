@@ -7,6 +7,11 @@ body {
     line-height: 1.6;
 }
 
+.spacing {
+    padding: 20px;
+    border-radius: 5px;
+}
+
 .Hero-section {
     position: relative;
     width: 100%;

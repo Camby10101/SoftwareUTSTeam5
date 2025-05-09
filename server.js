@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const path = require('path');
+const multer = require('multer'); // For handling file uploads
 const app = express();
 const port = 3000;
 
@@ -22,6 +23,18 @@ connection.connect((err) => {
   }
   console.log('Connected to MySQL database');
 });
+
+// Multer setup for storing images in a folder called "uploads"
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Store files in the "uploads" directory
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Use timestamp to avoid name collisions
+  }
+});
+
+const upload = multer({ storage: storage });
 
 // Registration endpoint
 app.post('/register', (req, res) => {
@@ -48,6 +61,60 @@ app.post('/register', (req, res) => {
     // Respond with success message
     res.json({ success: true, message: 'User registered successfully!' });
   });
+});
+
+// Endpoint to add a product (with an image upload)
+app.post('/addProduct', upload.single('image'), (req, res) => {
+  const { name, description, price } = req.body;
+  const imagePath = req.file ? req.file.path : null; // Store the image file path
+
+  console.log('Received product data:', req.body);
+  console.log('Received image file:', req.file);
+
+  // Validate input
+  if (!name || !description || !price) {
+    return res.json({ success: false, message: 'All fields are required!' });
+  }
+
+  // SQL query to insert product into the database
+  const query = 'INSERT INTO products (name, image, description, price) VALUES (?, ?, ?, ?)';
+
+  connection.execute(query, [name, imagePath, description, price], (err, results) => {
+    if (err) {
+      console.error('Error inserting product data: ' + err.stack);
+      return res.json({ success: false, message: 'Failed to add product!' });
+    }
+
+    res.json({ success: true, message: 'Product added successfully!' });
+  });
+});
+
+// Endpoint to get all products
+app.get('/getProducts', (req, res) => {
+  const query = 'SELECT * FROM products';
+
+  connection.execute(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching products: ' + err.stack);
+      return res.json({ success: false, message: 'Failed to retrieve products!' });
+    }
+
+    res.json({ success: true, products: results });
+  });
+});
+
+app.get('/checkout', (req, res) => {
+    const query = 'SELECT SUM(price) AS total_price FROM products';
+
+    connection.execute(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching total price: ' + err.stack);
+            return res.status(500).send('Server Error');
+        }
+
+        const totalPrice = results[0].total_price || 0; // Handle case where no products exist
+        res.render('checkout', { totalPrice: totalPrice });
+    });
 });
 
 // Serve static files (HTML, CSS, JS)

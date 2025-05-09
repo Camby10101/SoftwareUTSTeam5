@@ -32,15 +32,14 @@
         </nav>
     </header>
     
-    <div>
-        <h2>Checkout</h2>
-        <h3>Order</h3>
-        
-        <h3>Shipping Address</h3>
-        <p>Total: $20000.00</p>
-        <a href="cart.html"><button>Back to Cart</button></a>
-        <a href="payment.html"><button>Proceed to Payment</button></a>
-    </div>
+    <body>
+        <div class="spacing">
+            <h2>Checkout</h2>
+            <p>Total: $<span id="total-price">{{totalPrice}}</span></p>
+            <a href="cart.html"><button>Back to Cart</button></a>
+            <a href="payment.html"><button>Proceed to Payment</button></a>
+        </div>
+    </body>
     
     <footer>
         <div class="footer-content">
