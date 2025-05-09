@@ -1,5 +1,26 @@
 {
+  "name": "softwareutsteam5-7",
+  "version": "1.0.0",
+  "main": "db.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Camby10101/SoftwareUTSTeam5.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Camby10101/SoftwareUTSTeam5/issues"
+  },
+  "homepage": "https://github.com/Camby10101/SoftwareUTSTeam5#readme",
+  "description": "",
   "dependencies": {
-    "lowdb": "^7.0.1"
+    "express": "^5.1.0",
+    "mysql2": "^3.14.1",
+    "open": "^10.1.2"
   }
 }
