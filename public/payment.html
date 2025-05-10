@@ -107,16 +107,27 @@
         </div>
     </footer>
    <script>
-        function displayWelcomeMessage() {
-            const username = sessionStorage.getItem('username');
-            if (username) {
-                document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
-            }
+        // To be Changed
+        const cart = [
+            { name: 'Sensor A', description: 'Temperature sensor', price: 25.99 },
+            { name: 'Camera B', description: 'Security camera', price: 45.50 },
+            { name: 'Light C', description: 'Smart light bulb', price: 15.00 }
+        ];
+
+        function updateTotalPrice() {
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price;
+            });
+
+            document.getElementById('total-price').textContent = total.toFixed(2);
         }
 
+        window.onload = function() {
+            updateTotalPrice();
+        };
 
-        
-    
+
     </script>
 </div>
 </html>
