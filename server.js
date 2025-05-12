@@ -5,7 +5,11 @@ const multer = require('multer'); // For handling file uploads
 const app = express();
 const port = 3000;
 
+let orderHistory = [];
+
 // Middleware to parse incoming JSON requests
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(express.json());
 
 // MySQL Database Setup
@@ -128,6 +132,37 @@ app.get('/', (req, res) => {
 // Start the Express server
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
+});
+
+app.post('/submit-payment', (req, res) => {
+    const { name, creditCard, pin, expiry, address, cartData, total } = req.body;
+
+    const order = {
+        orderId: `ORD${Date.now()}`,
+        name,
+        creditCard,
+        pin,
+        expiry,
+        address,
+        total,
+        cart: JSON.parse(cartData),
+        timestamp: new Date().toISOString()
+    };
+
+    orderHistory.push(order);
+    console.log('New order:', order);
+
+    // Redirect to confirmation page
+    res.redirect('/confirmation.html');
+});
+
+// Optional route to see order history
+app.get('/orders', (req, res) => {
+    res.json(orderHistory);
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
 });
 
 
