@@ -556,6 +556,28 @@ footer li {
     color: #666;
 }
 
+.payment-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.payment-container h2 {
+    text-align: center;
+}
+
+.button-group {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.button-group .btn {
+    margin: 0 10px;
+}
 
 
 

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoTBay - Home</title>
     <link rel="stylesheet" type="text/css" href="CSS/styles.css">
-
 </head>
 <div>
     <header class="header-container">
@@ -32,20 +31,20 @@
         </nav>
     </header>
     
-    <div class="spacing">
+    <div class="payment-container">
         <h2>Checkout</h2>
         <br>
         <p>Total: $<span id="total-price">{{totalPrice}}</span></p>
         <br>
-        <form action="your-server-endpoint" method="POST">
+        <form id="payment-form" action="your-server-endpoint" method="POST">
             <div>
                 <label for="name">Full Name:</label>
-                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                <input type="text" id="name" name="name" placeholder="Enter your Full Name" required>
             </div>
             <br>
             <div>
                 <label for="credit-card">Credit Card Number:</label>
-                <input type="text" id="credit-card" name="credit-card" placeholder="Enter your credit card number" required>
+                <input type="text" id="credit-card" name="credit-card" placeholder="Enter your Card Number" required>
             </div>
             <br>
             <div>
@@ -66,8 +65,10 @@
             </div>
         </form>
         <br>
-        <a href="cart.html"><button class="btn">Back to Cart</button></a>
-        <a href="finishpayment.html"><button class="btn">Pay</button></a>
+        <div class="button-group">
+            <a href="cart.html"><button type="button" class="btn">Back to Cart</button></a>
+            <button type="submit" class="btn">Pay</button>
+        </div>
     </div>
     
     <footer>
@@ -108,24 +109,20 @@
     </footer>
    <script>
         // To be Changed
-        const cart = [
+       const cart = [
             { name: 'Sensor A', description: 'Temperature sensor', price: 25.99 },
             { name: 'Camera B', description: 'Security camera', price: 45.50 },
             { name: 'Light C', description: 'Smart light bulb', price: 15.00 }
         ];
 
         function updateTotalPrice() {
-            let total = 0;
-            cart.forEach(item => {
-                total += item.price;
-            });
-
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
             document.getElementById('total-price').textContent = total.toFixed(2);
+            document.getElementById('cart-data').value = JSON.stringify(cart);
+            document.getElementById('total-field').value = total.toFixed(2);
         }
 
-        window.onload = function() {
-            updateTotalPrice();
-        };
+        window.onload = updateTotalPrice;
 
 
     </script>
