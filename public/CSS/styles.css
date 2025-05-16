@@ -570,6 +570,34 @@ footer li {
     text-align: center;
 }
 
+.payment-info {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.payment-info h2 {
+    text-align: center;
+}
+
+.order-history {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.order-history h2 {
+    text-align: center;
+}
+
 .button-group {
     text-align: center;
     margin-top: 20px;
@@ -578,6 +606,18 @@ footer li {
 .button-group .btn {
     margin: 0 10px;
 }
+
+.confirmation {
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 600px;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  line-height: 1.6;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
 
 
 
