@@ -58,6 +58,7 @@
 
             <section class="order-history">
                 <h2>Order History</h2>
+                <ul id="order-list"></ul>
 
 
             </section>
@@ -104,7 +105,44 @@
    
    <script>
 
+    async function loadOrders() {
+        try {
+            const res = await fetch('/orders');
+            const data = await res.json();
 
+            if (!data.success) {
+                document.getElementById('order-list').innerHTML = '<li>Failed to load orders.</li>';
+                return;
+            }
+
+            const orders = data.orders;
+            const list = document.getElementById('order-list');
+            list.innerHTML = '';
+
+            if (orders.length === 0) {
+                list.innerHTML = '<li>No orders found.</li>';
+                return;
+            }
+
+            orders.forEach(order => {
+                const item = document.createElement('li');
+                item.innerHTML = `
+                    <strong>Order ID:</strong> ${order.orderId} <br>
+                    <strong>Name:</strong> ${order.name} <br>
+                    <strong>Total:</strong> $${order.total.toFixed(2)} <br>
+                    <strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()} <br>
+                    <strong>Address:</strong> ${order.address} <br>
+                    <hr>
+                `;
+                list.appendChild(item);
+            });
+        } catch (error) {
+            document.getElementById('order-list').innerHTML = '<li>Error loading orders.</li>';
+            console.error('Error loading orders:', error);
+        }
+    }
+
+    loadOrders();
         
     
     </script>

@@ -1,9 +1,12 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const session = require('express-session');
 const mysql = require('mysql2');
 const path = require('path');
 const multer = require('multer'); // For handling file uploads
 const app = express();
 const port = 3000;
+const PORT = process.env.PORT || 3000;
 
 let orderHistory = [];
 
@@ -16,7 +19,7 @@ app.use(express.json());
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',           // Your MySQL username
-  password: 'Balllife45', // Your MySQL password
+  password: '', // Your MySQL password
   database: 'iot'         // Database name
 });
 
@@ -134,36 +137,49 @@ app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
 
-app.post('/submit-payment', (req, res) => {
-    const { name, creditCard, pin, expiry, address, cartData, total } = req.body;
-
-    const order = {
-        orderId: `ORD${Date.now()}`,
-        name,
-        creditCard,
-        pin,
-        expiry,
-        address,
-        total,
-        cart: JSON.parse(cartData),
-        timestamp: new Date().toISOString()
-    };
-
-    orderHistory.push(order);
-    console.log('New order:', order);
-
-    // Redirect to confirmation page
-    res.redirect('/confirmation.html');
-});
 
 // Optional route to see order history
 app.get('/orders', (req, res) => {
-    res.json(orderHistory);
+    const query = 'SELECT * FROM orders ORDER BY timestamp DESC';
+
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('❌ Error retrieving orders:', err);
+            return res.status(500).json({ success: false });
+        }
+
+        res.json({ success: true, orders: results });
+    });
 });
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
+
+app.post('/submit-payment', (req, res) => {
+    const { name, creditCard, pin, expiry, address, cartData, total } = req.body;
+
+    const orderId = `ORD${Date.now()}`;
+    const cartJSON = JSON.stringify(JSON.parse(cartData)); // convert to proper JSON string
+
+    const query = `
+        INSERT INTO orders (order_id, name, credit_card, pin, expiry, address, total, cart)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const values = [orderId, name, creditCard, pin, expiry, address, total, cartJSON];
+
+    connection.execute(query, values, (err, results) => {
+        if (err) {
+            console.error('❌ Error saving order:', err);
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+
+        console.log('✅ Order saved:', orderId);
+        res.redirect('/confirmation.html');
+    });
+});
+
 
 
 
