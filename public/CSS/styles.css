@@ -572,6 +572,7 @@ footer li {
 
 .payment-info {
     max-width: 500px;
+    line-height: 2.5;
     margin: 40px auto;
     padding: 30px;
     border: 1px solid #ccc;
@@ -582,6 +583,7 @@ footer li {
 
 .payment-info h2 {
     text-align: center;
+    line-height: 2.5;
 }
 
 .order-history {
@@ -616,6 +618,12 @@ footer li {
   border-radius: 8px;
   line-height: 1.6;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-info-form {
+  margin: 20px auto;
+  padding: 20px;
+  line-height: 1.6;
 }
 
 
