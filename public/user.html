@@ -33,38 +33,37 @@
         </nav>
     </header>
     
-    <body>
-        <form class="user-info-form">
-            <section class="payment-info">
-                <h2>Payment Information</h2>
-                <label for="cardholder-name">Cardholder Name:</label>
-                <input type="text" id="cardholder-name" name="cardholder-name" value=""><br>
+    <form class="user-info-form" method="POST" action="/save-payment">
+        <section class="payment-info">
+            <h2>Payment Information</h2>
+            <label for="cardholderName">Cardholder Name:</label>
+            <input type="text" id="cardholderName" name="cardholderName" value=""><br>
 
-                <label for="card-number">Card Number:</label>
-                <input type="text" id="card-number" name="card-number" value=""><br>
+            <label for="cardNumber">Card Number:</label>
+            <input type="text" id="cardNumber" name="cardNumber" value=""><br>
 
-                <label for="pin">PIN:</label>
-                <input type="text" id="pin" name="pin" value=""><br>
+            <label for="pin">PIN:</label>
+            <input type="text" id="pin" name="pin" value=""><br>
 
-                <label for="card-number">Card Number:</label>
-                <input type="text" id="card-number" name="card-number" value=""><br>
+            <label for="expiry">Expiry Date:</label>
+            <input type="month" id="expiry" name="expiry"><br>
 
-                <div class="button-group">
-                    <button type="submit" class="btn">Save Changes</button>
-                </div>
-            </section>
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" rows="4"></textarea><br>
 
-            
+            <div class="button-group">
+                <button type="submit" class="btn">Save Changes</button>
+            </div>
+        </section>
 
-            <section class="order-history">
-                <h2>Order History</h2>
-                <ul id="order-list"></ul>
+        <section class="order-history">
+            <h2>Order History</h2>
+            <ul id="order-list"></ul>
 
 
-            </section>
+        </section>
 
-        </form>
-    </body>
+    </form>
     
     <footer>
         <div class="footer-content">
@@ -105,13 +104,22 @@
    
    <script>
 
+    function convertDateFormat(mmYYYY) { //Goes to American (test)
+        if (!mmYYYY) return '';
+        const parts = mmYYYY.split('-');
+        if (parts.length !== 2) return '';
+
+        const [month, year] = parts;
+        return `${year}-${month.padStart(2, '0')}`;
+    }
+
     async function loadOrders() {
         try {
             const res = await fetch('/orders');
             const data = await res.json();
 
             if (!data.success) {
-                document.getElementById('order-list').innerHTML = '<li>Failed to load orders.</li>';
+                document.getElementById('order-list').innerHTML = '<li>Unable to load orders.</li>';
                 return;
             }
 
@@ -127,22 +135,42 @@
             orders.forEach(order => {
                 const item = document.createElement('li');
                 item.innerHTML = `
-                    <strong>Order ID:</strong> ${order.orderId} <br>
+                    <strong>Order ID:</strong> ${order.order_id} <br>
                     <strong>Name:</strong> ${order.name} <br>
-                    <strong>Total:</strong> $${order.total.toFixed(2)} <br>
+                    <strong>Total:</strong> $${parseFloat(order.total).toFixed(2)} <br>
                     <strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()} <br>
                     <strong>Address:</strong> ${order.address} <br>
                     <hr>
-                `;
+                    `;
                 list.appendChild(item);
             });
         } catch (error) {
-            document.getElementById('order-list').innerHTML = '<li>Error loading orders.</li>';
+            document.getElementById('order-list').innerHTML = '<li>Unable to load orders.</li>';
             console.error('Error loading orders:', error);
         }
     }
 
     loadOrders();
+
+    async function loadLatestPayment() {
+        try {
+            const res = await fetch('/latest-payment');
+            const data = await res.json();
+
+            if (data.success && data.payment) {
+                const p = data.payment;
+                document.getElementById('cardholderName').value = p.cardholder_name || p.cardholderName || '';
+                document.getElementById('cardNumber').value = p.card_number || '';
+                document.getElementById('pin').value = p.pin || '';
+                document.getElementById('expiry').value = convertDateFormat(p.expiry);
+                document.getElementById('address').value = p.address || '';
+            }
+        } catch (error) {
+            console.error('Error loading payment info:', error);
+        }
+    }
+
+    loadLatestPayment();
         
     
     </script>

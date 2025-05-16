@@ -180,6 +180,71 @@ app.post('/submit-payment', (req, res) => {
     });
 });
 
+app.post('/save-payment', (req, res) => {
+  let { cardholderName, cardNumber, pin, expiry, address } = req.body;
+
+  // 🔍 Log the incoming data from the frontend
+  console.log("Incoming payment data:", {
+    cardholderName,
+    cardNumber,
+    pin,
+    expiry,
+    address
+  });
+
+  // Format values
+  cardholderName = cardholderName || null;
+  cardNumber = cardNumber || null;
+  pin = pin || null;
+  expiry = expiry ? `${expiry}-01` : null;
+  address = address || null;
+
+  // SQL query
+  const query = `
+    INSERT INTO payment_info (cardholder_name, card_number, pin, expiry, address)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  const params = [cardholderName, cardNumber, pin, expiry, address];
+
+  // 🔍 Log the SQL and parameters
+  console.log("Executing SQL:", query);
+  console.log("With parameters:", params);
+
+  connection.execute(query, params, (err, results) => {
+    if (err) {
+      console.error("❌ MySQL Error:", err);
+      return res.status(500).json({ success: false, message: 'Database error' });
+    }
+
+    console.log("✅ Payment info saved successfully.");
+    res.json({ success: true });
+  });
+});
+
+
+app.get('/latest-payment', (req, res) => {
+    const query = `
+        SELECT * FROM payments
+        ORDER BY timestamp DESC
+        LIMIT 1
+    `;
+
+    connection.query(query, (err, results) => {
+        if (err) {
+            console.error('❌ Error fetching payment info:', err);
+            return res.status(500).json({ success: false });
+        }
+
+        if (results.length === 0) {
+            return res.json({ success: true, payment: null });
+        }
+
+        res.json({ success: true, payment: results[0] });
+    });
+});
+
+
 
 
 
