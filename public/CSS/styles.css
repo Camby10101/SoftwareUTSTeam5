@@ -570,6 +570,34 @@ footer li {
     text-align: center;
 }
 
+.payment-info {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.payment-info h2 {
+    text-align: center;
+}
+
+.order-history {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.order-history h2 {
+    text-align: center;
+}
+
 .button-group {
     text-align: center;
     margin-top: 20px;

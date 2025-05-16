@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoTBay - Home</title>
     <link rel="stylesheet" type="text/css" href="CSS/styles.css">
-
+    
 </head>
-<body onload="displayWelcomeMessage()">
+<body>
     <header class="header-container">
         <div class="header-img">
             <a href="index.html"> <img src="images/Logo.png" alt="IoTBay Logo" class="logo">
@@ -33,45 +33,38 @@
         </nav>
     </header>
     
-    <div class="spacing">
-        <h2>Your Cart</h2>
-        <!--<div class="cart-container">
-            <div class="cart-item">
-                <img src="images/IotEmbeddedSystem.webp">
-                <div class="item-description">
-                    <p>IOT Sensor something something</p>
-                    <p>$300.00</p>
-                    <button>REMOVE</button>
-                    <button>- 1 +</button>
+    <body>
+        <form class="user-info-form">
+            <section class="payment-info">
+                <h2>Payment Information</h2>
+                <label for="cardholder-name">Cardholder Name:</label>
+                <input type="text" id="cardholder-name" name="cardholder-name" value=""><br>
+
+                <label for="card-number">Card Number:</label>
+                <input type="text" id="card-number" name="card-number" value=""><br>
+
+                <label for="pin">PIN:</label>
+                <input type="text" id="pin" name="pin" value=""><br>
+
+                <label for="card-number">Card Number:</label>
+                <input type="text" id="card-number" name="card-number" value=""><br>
+
+                <div class="button-group">
+                    <button type="submit" class="btn">Save Changes</button>
                 </div>
-            </div>
-        </div>
-    </div>
+            </section>
 
-    <div>
-        <div class="cart-container">
-            <div class="cart-item">
-                <img src="images/IotEmbeddedSystem.webp">
-                <div class="item-description">
-                    <p>IOT Sensor something something</p>
-                    <p>$300.00</p>
-                    <button>REMOVE</button>
-                    <button>- 1 +</button>
-                </div>
-            </div>
-        </div>
-    </div> -->
+            
 
-    <div class="spacing">
-        <p>Subtotal: $</p>
-        <br>
-        <div>
-            <a href="index.html"><button class="item-btn">Continue Shopping</button></a>
-            <a href="payment.html"><button class="item-btn">Checkout</button></a>
-        </div>
-    </div>
+            <section class="order-history">
+                <h2>Order History</h2>
 
 
+            </section>
+
+        </form>
+    </body>
+    
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -108,13 +101,8 @@
             <p>&copy; 2025 IoTBay. All rights reserved.</p>
         </div>
     </footer>
+   
    <script>
-        function displayWelcomeMessage() {
-            const username = sessionStorage.getItem('username');
-            if (username) {
-                document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
-            }
-        }
 
 
         
