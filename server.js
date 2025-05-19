@@ -5,8 +5,6 @@ const app = express();
 const port = 3000;
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const mysql = require('mysql2');
-const path = require('path');
 const multer = require('multer'); // For handling file uploads
 const PORT = process.env.PORT || 3000;
 
