@@ -16,12 +16,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // MySQL Database Setup
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',           // Your MySQL username
-  password: '', // Your MySQL password
-  database: 'iot'         // Database name
-});
+const connection = require('./db');
+// const connection = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',           // Your MySQL username
+//   password: '', // Your MySQL password
+//   database: 'iot'         // Database name
+// });
 
 connection.connect(err => {
   if (err) {
