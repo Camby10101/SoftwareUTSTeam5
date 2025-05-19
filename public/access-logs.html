@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IoTBay - Access Logs</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body onload="checkSession()">
+
+  <header class="header-container">
+    <div class="header-img">
+      <a href="index.html"><img src="Logo.png" alt="IoTBay Logo" class="logo"/></a>
+    </div>
+    <div class="header-title">
+      <h1>IOT-BAY</h1>
+    </div>
+    <nav class="index-nav">
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="logout.html">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="logs-container">
+    <h2>Your Access Logs</h2>
+
+    <div class="date-filter">
+      <label for="logDate">Log Date:</label>
+      <input type="date" id="logDate" />
+      <button onclick="fetchAccessLogs()">Search</button>
+    </div>
+
+    <table id="logsTable">
+      <thead>
+        <tr>
+          <th>Login Time</th>
+          <th>Logout Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Populated dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Contact Us</h4>
+        <p>Email: support@iotbay.com</p>
+        <p>Phone: 1-800-IOT-BAY</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    async function checkSession() {
+      const email = sessionStorage.getItem('email');
+      if (!email) {
+        alert('Please log in first.');
+        window.location.href = 'login.html';
+      }
+    }
+
+    async function fetchAccessLogs() {
+      const email = sessionStorage.getItem('email');
+      const date = document.getElementById('logDate').value;
+
+      if (!email || !date) {
+        alert('Please select a date.');
+        return;
+      }
+
+      try {
+        // Step 1: Fetch user_id from email
+        const userRes = await fetch(`/user?email=${email}`);
+        const userData = await userRes.json();
+
+        if (!userRes.ok || !userData.user || !userData.user.user_id) {
+          alert('User not found.');
+          return;
+        }
+
+        const userId = userData.user.user_id;
+
+        // Step 2: Fetch logs for that user on that date
+        const logsRes = await fetch(`/user/logs?user_id=${userId}&date=${date}`);
+        const logsData = await logsRes.json();
+
+        const tbody = document.querySelector('#logsTable tbody');
+        tbody.innerHTML = ''; // Clear old rows
+
+        if (logsRes.ok) {
+          logsData.logs.forEach(log => {
+            const row = tbody.insertRow();
+            row.insertCell(0).textContent = log.login_time;
+            row.insertCell(1).textContent = log.logout_time || 'Still logged in';
+          });
+        } else {
+          alert(logsData.message || 'No logs found.');
+        }
+      } catch (err) {
+        console.error('Error fetching logs:', err);
+        alert('An error occurred while fetching logs.');
+      }
+    }
+  </script>
+</body>
+</html>
+
+

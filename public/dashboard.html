@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoTBay - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body onload="displayUserDashboard()">
+    <header class="header-container">
+        <div class="header-img">
+            <a href="index.html">
+                <img src="Logo.png" alt="IoTBay Logo" class="logo">
+            </a>
+        </div>
+        <div class="header-title">
+            <h1>IOT-BAY</h1>
+        </div>
+        <form class="search-form">
+            <label for="search-input" class="search-label">Search:</label>
+            <input type="text" id="search-input" placeholder="Search...">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+        <nav class="index-nav">
+            <ul>
+                <li><a href="product.html">Shop</a></li>
+                <li><a href="logout.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="welcome-container">
+        <h2 id="dashboardWelcome">Welcome to Your Dashboard</h2>
+    </div>
+
+    <div class="dashboard-options">
+        <ul>
+            <li><a href="view-profile.html">View Registration Details</a></li>
+            <li><a href="edit-profile.html">Edit Registration Details</a></li>
+            <li><a href="access-logs.html">View Access Logs</a></li>
+            <li><a href="cancel-registration.html">Cancel Registration</a></li>
+        </ul>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: support@iotbay.com</p>
+                <p>Phone: 1-800-IOT-BAY</p>
+            </div>
+            <div class="footer-section">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="/contact">Contact Us</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/shipping-returns">Shipping & Returns</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#"><p>Facebook</p></a>
+                    <a href="#"><p>Twitter</p></a>
+                    <a href="#"><p>Instagram</p></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 IoTBay. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function displayUserDashboard() {
+            const email = sessionStorage.getItem('email');
+            if (email) {
+                document.getElementById('dashboardWelcome').textContent = `Welcome, ${email}`;
+            }
+        }
+    </script>
+</body>
+</html>

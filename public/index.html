@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoTBay - Home</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body onload="displayWelcomeMessage()">
+    <header class="header-container">
+        <div class="header-img">
+            <a href="index.html"> <img src="Logo.png" alt="IoTBay Logo" class="logo">
+            </a>
+        </div>
+        <div class="header-title">
+            <h1>IOT-BAY</h1>
+        </div>
+        <form class="search-form">
+            <label for="search-input" class="search-label">Search:</label>
+            <input type="text" id="search-input" placeholder="Search...">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+        <nav class="index-nav">
+            <ul>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="product.html">Shop</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="logout.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="welcome-container">
+        <h2 id="welcomeMessage">Welcome!</h2>
+    </div>
+
+    <div class="Hero-section">
+        <h1>Smart Living Starts Here</h1>
+        <p>Your one-stop shop for smart devices that make life easier.</p>
+        <button>Shop Products</button>
+    </div>
+
+    <div id="Shop-msg">
+        <h3> Most Popular Products </h3>
+    </div>
+
+    <div class="card-container">
+        <div class="card">
+            <img src="IOTSensor.webp">
+            <div class="card-content">
+                <h4>Iot Sensor</h4>
+                <p>This IoT-based sensor can be used to detect motion. It's commonly used in the manufacturing of goods.</p>
+                <a href="#" class="btn">Read More</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="Sony-TV.webp">
+            <div class="card-content">
+                <h4>Sony 4K Google TV</h4>
+                <p>Powered by Google TV, it integrates voice control and apps in one place.</p>
+                <a href="#" class="btn">Read More</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="IotEmbeddedSystem.webp">
+            <div class="card-content">
+                <h4>Hardware</h4>
+                <p>IoT embedded chip for devices that need hardware.</p>
+                <a href="#" class="btn">Read More</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="about-heading">
+        <h1>About Us</h1>
+        <p>IoT (Internet of Things) products are devices that seamlessly connect with each other to create smarter environments. Used worldwide, they make everyday tasks easier and more efficient.</p>
+    </div>
+
+    <div class="about-container">
+        <section class="about">
+            <div class="about-img">
+                <img src="connectivity.avif" alt="connect">
+            </div>
+            <div class="about-content">
+                <h2>Embrace the Future</h2>
+                <p>The world of technology is evolving at a rapid pace, and so is the way we interact with it. At IoT Bay, we’re dedicated to improving our customers' lives by providing a user-friendly platform that promotes productivity, education, and enjoyment. Through our e-commerce application, we aim to make the latest technology accessible, helping customers stay up to date with cutting-edge IoT innovations that enhance their daily lives.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: support@iotbay.com</p>
+                <p>Phone: 1-800-IOT-BAY</p>
+            </div>
+            <div class="footer-section">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="/contact">Contact Us</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/shipping-returns">Shipping & Returns</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#"><p>Facebook</p></a>
+                    <a href="#"><p>Twitter</p></a>
+                    <a href="#"><p>Instagram</p></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 IoTBay. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function displayWelcomeMessage() {
+            const email = sessionStorage.getItem('email');
+            if (email) {
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${email}!`;
+            }
+        }
+
+        function showDashboardLinkIfLoggedIn() {
+            const email = sessionStorage.getItem('email');
+            if (email) {
+                const navList = document.querySelector('.index-nav ul');
+                const existingLink = document.querySelector('a[href="dashboard.html"]');
+                if (!existingLink) {
+                    const dashboardItem = document.createElement('li');
+                    const dashboardLink = document.createElement('a');
+                    dashboardLink.href = 'dashboard.html';
+                    dashboardLink.textContent = 'Dashboard';
+                    dashboardItem.appendChild(dashboardLink);
+                    navList.appendChild(dashboardItem);
+                }
+            }
+        }
+
+        window.onload = function () {
+            displayWelcomeMessage();
+            showDashboardLinkIfLoggedIn();
+        };
+    </script>
+</body>
+</html>
+
+
+
+
+
+

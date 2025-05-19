@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IoTBay - Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header-container">
+        <div class="header-img">
+            <a href="index.html"><img src="Logo.png" alt="IoTBay Logo" class="logo"></a>
+        </div>
+        <div class="header-title"><h1>IoTBay</h1></div>
+        <form class="search-form">
+            <label for="search-input" class="search-label">Search:</label>
+            <input type="text" id="search-input" placeholder="Search...">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+        <nav class="index-nav">
+            <ul>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="product.html">Shop</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="logout.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="form-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="register.html">Register here</a></p>
+    </div>
+
+    <footer>
+        <!-- your footer content remains unchanged -->
+    </footer>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const inputPassword = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`/user?email=${encodeURIComponent(email)}`);
+                const text = await response.text();
+                let result;
+
+                try {
+                    result = JSON.parse(text);
+                } catch {
+                    alert('Something went wrong during login.');
+                    return;
+                }
+
+                if (!result.success) {
+                    alert(result.message || 'Login failed');
+                    return;
+                }
+
+                const user = result.user;
+
+                if (inputPassword !== user.password) {
+                    alert('Incorrect password');
+                    return;
+                }
+
+                // Log login
+                const logRes = await fetch('/log-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: user.user_id })
+                });
+
+                const logResult = await logRes.json();
+
+                if (!logResult.success) {
+                    alert('Login logging failed');
+                    return;
+                }
+
+                // Save login info to session storage
+                sessionStorage.setItem('email', user.email);
+                sessionStorage.setItem('password', user.password);
+                sessionStorage.setItem('user_id', user.user_id);
+                sessionStorage.setItem('log_id', logResult.accessLogId);
+
+                window.location.href = 'index.html';
+
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Something went wrong during login.');
+            }
+        });
+    </script>
+</body>
+</html>

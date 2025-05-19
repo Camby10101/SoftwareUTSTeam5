@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoTBay - View Profile</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body onload="displayUserProfile()">
+    <header class="header-container">
+        <div class="header-img">
+            <a href="index.html">
+                <img src="Logo.png" alt="IoTBay Logo" class="logo">
+            </a>
+        </div>
+        <div class="header-title">
+            <h1>IOT-BAY</h1>
+        </div>
+        <form class="search-form">
+            <label for="search-input" class="search-label">Search:</label>
+            <input type="text" id="search-input" placeholder="Search...">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+        <nav class="index-nav">
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="logout.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="profile-container">
+        <h2>Your Registration Details</h2>
+        <div id="profileDetails">
+            <!-- User details will be displayed here -->
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: support@iotbay.com</p>
+                <p>Phone: 1-800-IOT-BAY</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        async function displayUserProfile() {
+            const email = sessionStorage.getItem('email');
+            if (email) {
+                const response = await fetch(`/user/details?email=${email}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('profileDetails').innerHTML = `
+                        <p>Email: ${data.user.email}</p>
+                        <p>Full Name: ${data.user.fullname}</p>
+                        <p>Phone: ${data.user.phone}</p>
+                    `;
+                } else {
+                    alert('Error fetching user details: ' + data.message);
+                }
+            } else {
+                alert('User is not logged in');
+            }
+        }
+    </script>
+</body>
+</html>

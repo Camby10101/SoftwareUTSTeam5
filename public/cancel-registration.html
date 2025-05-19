@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoTBay - Cancel Registration</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header-container">
+        <div class="header-img">
+            <a href="index.html">
+                <img src="Logo.png" alt="IoTBay Logo" class="logo">
+            </a>
+        </div>
+        <div class="header-title">
+            <h1>IOT-BAY</h1>
+        </div>
+        <form class="search-form">
+            <label for="search-input" class="search-label">Search:</label>
+            <input type="text" id="search-input" placeholder="Search...">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+        <nav class="index-nav">
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="logout.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="cancel-container">
+        <h2>Cancel Your Registration</h2>
+        <p>Are you sure you want to cancel your registration? This action cannot be undone.</p>
+        <button id="cancelButton">Cancel Registration</button>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: support@iotbay.com</p>
+                <p>Phone: 1-800-IOT-BAY</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('cancelButton').addEventListener('click', async function () {
+            const email = sessionStorage.getItem('email');
+            if (!email) {
+                alert('You must be logged in to cancel your registration.');
+                return;
+            }
+
+            const confirmed = confirm('Are you sure you want to cancel your registration? This cannot be undone.');
+            if (!confirmed) return;
+
+            try {
+                const response = await fetch('/user', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+                alert(data.message);
+
+                if (data.success) {
+                    sessionStorage.clear();
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while cancelling registration.');
+            }
+        });
+    </script>
+</body>
+</html>
