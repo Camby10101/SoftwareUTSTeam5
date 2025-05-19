@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoTBay - Home</title>
+    <link rel="stylesheet" type="text/css" href="CSS/styles.css">
+    
+</head>
+<body>
+    <header class="header-container">
+        <div class="header-img">
+            <a href="index.html"> <img src="images/Logo.png" alt="IoTBay Logo" class="logo">
+            </a>
+        </div>
+        <div class="header-title">
+            <h1>IOT-BAY</h1>
+        </div>
+        <form class="search-form">
+            <label for="search-input" class="search-label">Search:</label>
+            <input type="text" id="search-input" placeholder="Search...">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+        <nav class="index-nav">
+            <ul>
+                <li><a href="index.html">Shop</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="user.html">User</a></li>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="logout.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <form class="user-info-form" method="POST" action="/save-payment">
+        <section class="payment-info">
+            <h2>Payment Information</h2>
+            <label for="cardholderName">Cardholder Name:</label>
+            <input type="text" id="cardholderName" name="cardholderName" value=""><br>
+
+            <label for="cardNumber">Card Number:</label>
+            <input type="text" id="cardNumber" name="cardNumber" value=""><br>
+
+            <label for="pin">PIN:</label>
+            <input type="text" id="pin" name="pin" value=""><br>
+
+            <label for="expiry">Expiry Date:</label>
+            <input type="month" id="expiry" name="expiry"><br>
+
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" rows="4"></textarea><br>
+
+            <div class="button-group">
+                <button type="submit" class="btn">Save Changes</button>
+            </div>
+        </section>
+
+        <section class="order-history">
+            <h2>Order History</h2>
+            <ul id="order-list"></ul>
+
+
+        </section>
+
+    </form>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: support@iotbay.com</p>
+                <p>Phone: 1-800-IOT-BAY</p>
+            </div>
+            <div class="footer-section">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="/contact">Contact Us</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/shipping-returns">Shipping & Returns</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#"><img src="images/facebook-icon.png" alt="Facebook"></a>
+                    <a href="#"><img src="images/twitter-icon.png" alt="Twitter"></a>
+                    <a href="#"><img src="images/instagram-icon.png" alt="Instagram"></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 IoTBay. All rights reserved.</p>
+        </div>
+    </footer>
+   
+   <script>
+
+    function convertDateFormat(mmYYYY) { //Goes to American (test)
+        if (!mmYYYY) return '';
+        const parts = mmYYYY.split('-');
+        if (parts.length !== 2) return '';
+
+        const [month, year] = parts;
+        return `${year}-${month.padStart(2, '0')}`;
+    }
+
+    async function loadOrders() {
+        try {
+            const res = await fetch('/orders');
+            const data = await res.json();
+
+            if (!data.success) {
+                document.getElementById('order-list').innerHTML = '<li>Unable to load orders.</li>';
+                return;
+            }
+
+            const orders = data.orders;
+            const list = document.getElementById('order-list');
+            list.innerHTML = '';
+
+            if (orders.length === 0) {
+                list.innerHTML = '<li>No orders found.</li>';
+                return;
+            }
+
+            orders.forEach(order => {
+                const item = document.createElement('li');
+                item.innerHTML = `
+                    <strong>Order ID:</strong> ${order.order_id} <br>
+                    <strong>Name:</strong> ${order.name} <br>
+                    <strong>Total:</strong> $${parseFloat(order.total).toFixed(2)} <br>
+                    <strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()} <br>
+                    <strong>Address:</strong> ${order.address} <br>
+                    <hr>
+                    `;
+                list.appendChild(item);
+            });
+        } catch (error) {
+            document.getElementById('order-list').innerHTML = '<li>Unable to load orders.</li>';
+            console.error('Error loading orders:', error);
+        }
+    }
+
+    loadOrders();
+
+    async function loadLatestPayment() {
+        try {
+            const res = await fetch('/latest-payment');
+            const data = await res.json();
+
+            if (data.success && data.payment) {
+                const p = data.payment;
+                document.getElementById('cardholderName').value = p.cardholder_name || p.cardholderName || '';
+                document.getElementById('cardNumber').value = p.card_number || '';
+                document.getElementById('pin').value = p.pin || '';
+                document.getElementById('expiry').value = convertDateFormat(p.expiry);
+                document.getElementById('address').value = p.address || '';
+            }
+        } catch (error) {
+            console.error('Error loading payment info:', error);
+        }
+    }
+
+    loadLatestPayment();
+    
+    </script>
+</body>
+</html>
+
+
+
+
+
