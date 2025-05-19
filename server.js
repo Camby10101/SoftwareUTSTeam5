@@ -3,15 +3,26 @@ const mysql = require('mysql2');
 const path = require('path');
 const app = express();
 const port = 3000;
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const mysql = require('mysql2');
+const path = require('path');
+const multer = require('multer'); // For handling file uploads
+const PORT = process.env.PORT || 3000;
+
+let orderHistory = [];
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
+// MySQL Database Setup
 const connection = mysql.createConnection({
   host: 'localhost',
-  user: 'root',
-  password: 'Balllife45',
-  database: 'iot'
+  user: 'root',           // Your MySQL username
+  password: '', // Your MySQL password
+  database: 'iot'         // Database name
 });
 
 connection.connect(err => {
@@ -195,38 +206,6 @@ app.put('/user/update', (req, res) => {
     });
   });
   
-
-const bodyParser = require('body-parser');
-const session = require('express-session');
-const mysql = require('mysql2');
-const path = require('path');
-const multer = require('multer'); // For handling file uploads
-const app = express();
-const port = 3000;
-const PORT = process.env.PORT || 3000;
-
-let orderHistory = [];
-
-// Middleware to parse incoming JSON requests
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(express.json());
-
-// MySQL Database Setup
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',           // Your MySQL username
-  password: '', // Your MySQL password
-  database: 'iot'         // Database name
-});
-
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to the database: ' + err.stack);
-    return;
-  }
-  console.log('Connected to MySQL database');
-});
 
 // Multer setup for storing images in a folder called "uploads"
 const storage = multer.diskStorage({
