@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoTBay - Home</title>
     <link rel="stylesheet" type="text/css" href="CSS/styles.css">
-    
 </head>
 <body onload="displayWelcomeMessage()">
     <header class="header-container">
@@ -32,7 +31,6 @@
             </ul>
         </nav>
     </header>
-
     <div class="Hero-section">
         <h1>Smart Living Starts Here</h1>
         <p>Your one-stop shop for smart devices that make life easier.</p>
@@ -97,7 +95,7 @@
         </section>
 
     </div>
-    
+   
 
     <footer>
         <div class="footer-content">
@@ -132,26 +130,38 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 IoTBay. All rights reserved.</p>
+            <p>&copy; 2023 IoTBay. All rights reserved.</p>
         </div>
     </footer>
-   
-   <script>
+
+    <script>
         function displayWelcomeMessage() {
-            const username = sessionStorage.getItem('username');
-            if (username) {
-                document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
+            const email = sessionStorage.getItem('email');
+            if (email) {
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${email}!`;
             }
         }
 
+        function showDashboardLinkIfLoggedIn() {
+            const email = sessionStorage.getItem('email');
+            if (email) {
+                const navList = document.querySelector('.index-nav ul');
+                const existingLink = document.querySelector('a[href="dashboard.html"]');
+                if (!existingLink) {
+                    const dashboardItem = document.createElement('li');
+                    const dashboardLink = document.createElement('a');
+                    dashboardLink.href = 'dashboard.html';
+                    dashboardLink.textContent = 'Dashboard';
+                    dashboardItem.appendChild(dashboardLink);
+                    navList.appendChild(dashboardItem);
+                }
+            }
+        }
 
-        
-    
+        window.onload = function () {
+            displayWelcomeMessage();
+            showDashboardLinkIfLoggedIn();
+        };
     </script>
 </body>
 </html>
-
-
-
-
-

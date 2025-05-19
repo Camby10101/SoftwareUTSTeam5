@@ -34,15 +34,14 @@
     <div class="form-container">
         <h2>Register</h2>
         <form onsubmit="storeUserData(event)">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-
+            <label for="fullname">Fullname:</label>
+            <input type="text" id="fullname" name="fullname" required>
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
-
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone" required>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
-
             <label for="confirmPassword">Confirm Password:</label>
             <input type="password" id="confirmPassword" name="confirmPassword" required>
 
@@ -100,35 +99,39 @@
             return true;
         }
 
-    
         async function storeUserData(event) {
-  event.preventDefault(); // Good: prevents the default browser form submission
+            event.preventDefault(); // Prevents the default browser form submission
 
-  // Validate passwords match
-  if (validateForm()) {
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+            // Validate the form data before sending
+            if (validateForm()) {
+                const fullname = document.getElementById('fullname').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const password = document.getElementById('password').value;
 
-    const userData = { username, email, password };
+                const userData = { fullname, email, phone, password };
 
-    const response = await fetch('/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData)
-    });
+                try {
+                    const response = await fetch('/register', {  // Ensure this matches your Express route
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(userData)
+                    });
 
-    const result = await response.json();
-    if (result.success) {
-      window.location.href = "index.html";
-    } else {
-      alert(result.message);
-    }
-  }
-}
-
+                    const result = await response.json();
+                    if (result.success) {
+                        window.location.href = "index.html";
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("An error occurred during registration. Please try again later.");
+                }
+            }
+        }
     </script>
 </body>
 </html>

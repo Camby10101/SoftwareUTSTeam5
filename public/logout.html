@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="CSS/styles.css">
-    <title>logout</title>
+    <title>Logout</title>
 </head>
 
 
@@ -33,19 +33,15 @@
         </nav>
     </header>
 
-
     <div class="form-container">
-        <h2>Login</h2>
+        <h2>Logout</h2>
         <form id="logoutForm">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
-
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
-
-            <button type="submit">Login</button>
+            <button type="submit">Logout</button>
         </form>
-        <p>Don't have an account? <a href="register.html">Register here</a></p>
     </div>
 
     <footer>
@@ -85,29 +81,37 @@
         </div>
     </footer>
 
-
-
-
     <script>
-    document.getElementById('logoutForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+        document.getElementById('logoutForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-        let inputEmail = document.getElementById('email').value;
-        const storedEmail = sessionStorage.getItem('email'); // Changed to retrieve 'email'
-        let inputPassword = document.getElementById('password').value;
-        const storedPassword = sessionStorage.getItem('password');
+            const inputEmail = document.getElementById('email').value;
+            const inputPassword = document.getElementById('password').value;
+            const storedEmail = sessionStorage.getItem('email');
+            const storedPassword = sessionStorage.getItem('password');
+            const logId = sessionStorage.getItem('log_id');
 
-        if (inputEmail === storedEmail && inputPassword === storedPassword) {
-            sessionStorage.removeItem('email'); // Changed to remove 'email'
-            sessionStorage.removeItem('password');
-            sessionStorage.removeItem('username');
-            window.location.href = 'index.html';
-        } else {
-            alert('Incorrect email or password. Logout failed.');
-        }
-    });
-</script>
+            if (inputEmail === storedEmail && inputPassword === storedPassword) {
+                // Log logout time
+                const logoutRes = await fetch('/logout-log', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: logId })
+                });
 
+                const logoutResult = await logoutRes.json();
 
+                if (!logoutResult.success) {
+                    alert('Logout logging failed.');
+                    return;
+                }
+
+                sessionStorage.clear();
+                window.location.href = 'index.html';
+            } else {
+                alert('Incorrect email or password. Logout failed.');
+            }
+        });
+    </script>
 </body>
 </html>

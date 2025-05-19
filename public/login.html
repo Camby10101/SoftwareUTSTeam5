@@ -36,17 +36,15 @@
         <form id="loginForm">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
-
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
-
             <button type="submit">Login</button>
         </form>
         <p>Don't have an account? <a href="register.html">Register here</a></p>
     </div>
 
     <footer>
-        <div class="footer-content">
+      <div class="footer-content">
             <div class="footer-section">
                 <h4>Contact Us</h4>
                 <p>Email: support@iotbay.com</p>
@@ -83,23 +81,63 @@
     </footer>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent default form submission
-    
-            let email = document.getElementById('email').value;
-            const storedemail= sessionStorage.getItem('email');
-            let inputpassword = document.getElementById('password').value;
-            const storedPassword = sessionStorage.getItem('password');
-    
-            if (email === storedemail && inputpassword === storedPassword) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const inputPassword = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`/user?email=${encodeURIComponent(email)}`);
+                const text = await response.text();
+                let result;
+
+                try {
+                    result = JSON.parse(text);
+                } catch {
+                    alert('Something went wrong during login.');
+                    return;
+                }
+
+                if (!result.success) {
+                    alert(result.message || 'Login failed');
+                    return;
+                }
+
+                const user = result.user;
+
+                if (inputPassword !== user.password) {
+                    alert('Incorrect password');
+                    return;
+                }
+
+                // Log login
+                const logRes = await fetch('/log-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: user.user_id })
+                });
+
+                const logResult = await logRes.json();
+
+                if (!logResult.success) {
+                    alert('Login logging failed');
+                    return;
+                }
+
+                // Save login info to session storage
+                sessionStorage.setItem('email', user.email);
+                sessionStorage.setItem('password', user.password);
+                sessionStorage.setItem('user_id', user.user_id);
+                sessionStorage.setItem('log_id', logResult.accessLogId);
+
                 window.location.href = 'index.html';
-            } else {
-                
-                alert('Incorrect username or password.');
-                
+
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Something went wrong during login.');
             }
         });
     </script>
-
 </body>
 </html>
