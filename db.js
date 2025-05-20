@@ -29,6 +29,62 @@ connection.query('CREATE DATABASE IF NOT EXISTS iot', (err) => {
   connection.changeUser({ database: 'iot' }, (err) => {
     if (err) throw err;
 
+
+
+
+
+    const createCustomersTable = `
+  CREATE TABLE IF NOT EXISTS customers (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    fullname VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    phone VARCHAR(20),
+    password VARCHAR(100)
+  )
+`;
+connection.query(createCustomersTable, (err) => {
+  if (err) throw err;
+  console.log('✅ Customers table ready');
+});
+
+connection.query('SELECT COUNT(*) AS count FROM customers', (err, results) => {
+  if (err) throw err;
+
+  const count = results[0].count;
+  if (count === 0) {
+    const insertUsers = `
+      INSERT INTO customers (fullname, email, phone, password)
+      VALUES 
+        ('Alice Johnson', 'alice@example.com', '1234567890', 'password123'),
+        ('Bob Smith', 'bob@example.com', '0987654321', 'mypassword'),
+        ('Charlie Brown', 'charlie@example.com', '5551234567', 'charlie123')
+    `;
+    connection.query(insertUsers, (err) => {
+      if (err) throw err;
+      console.log('✅ Sample customers inserted');
+    });
+  } else {
+    console.log(`${count} customers already exist.`);
+  }
+});
+
+
+const createAccessLogTable = `
+  CREATE TABLE IF NOT EXISTS accesslog (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    login_time DATETIME,
+    logout_time DATETIME,
+    FOREIGN KEY (user_id) REFERENCES customers(user_id)
+  )
+`;
+connection.query(createAccessLogTable, (err) => {
+  if (err) throw err;
+  console.log('✅ AccessLog table ready');
+});
+
+
+
     // Create 'products' table if it doesn't exist
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS products (
