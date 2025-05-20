@@ -572,7 +572,7 @@ footer li {
 
 .payment-info {
     max-width: 500px;
-    line-height: 2.5;
+    line-height: 4;
     margin: 40px auto;
     padding: 30px;
     border: 1px solid #ccc;
@@ -623,9 +623,53 @@ footer li {
 .user-info-form {
   margin: 20px auto;
   padding: 20px;
-  line-height: 1.6;
+  line-height: 2.5;
 }
 
+.card-dropdown {
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23666" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 20px;
+  cursor: pointer;
+  width: 250px;
+  color: #000;
+}
+
+.card-dropdown:invalid {
+  color: #ccc;
+}
+
+.card-dropdown option {
+  color: #000;
+}
+
+.card-dropdown option[disabled][selected] {
+  color: #ccc;
+}
+
+.card-dropdown:focus {
+  outline: none;
+  border-color: #007BFF;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.fill-space {
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  appearance: none;
+  cursor: pointer;
+  width: 250px;
+}
 
 
 

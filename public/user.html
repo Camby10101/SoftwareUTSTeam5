@@ -38,19 +38,29 @@
         <section class="payment-info">
             <h2>Payment Information</h2>
             <label for="cardholderName">Cardholder Name:</label>
-            <input type="text" id="cardholderName" name="cardholderName" value=""><br>
+            <input type="text" id="cardholderName" name="cardholderName" class="fill-space" value=""><br>
+
+            <div>
+                <label for="cardType">Select Card Type:</label>
+                    <select id="cardType" name="cardType" class="card-dropdown" required>
+                    <option value="" disabled selected>Select your card</option>
+                    <option value="visa">Visa</option>
+                    <option value="mastercard">Mastercard</option>
+                    <option value="amex">American Express</option>
+                    </select>
+            </div>
 
             <label for="cardNumber">Card Number:</label>
-            <input type="text" id="cardNumber" name="cardNumber" value=""><br>
+            <input type="text" id="cardNumber" name="cardNumber" class="fill-space" value=""><br>
 
             <label for="pin">PIN:</label>
-            <input type="text" id="pin" name="pin" value=""><br>
+            <input type="text" id="pin" name="pin" class="fill-space" value=""><br>
 
             <label for="expiry">Expiry Date:</label>
-            <input type="month" id="expiry" name="expiry"><br>
+            <input type="month" id="expiry" name="expiry" class="fill-space"><br>
 
             <label for="address">Address:</label>
-            <textarea id="address" name="address" rows="4"></textarea><br>
+            <textarea id="address" name="address" class="fill-space" rows="4"></textarea><br>
 
             <div class="button-group">
                 <button type="submit" class="btn">Save Changes</button>
@@ -172,6 +182,40 @@
     }
 
     loadLatestPayment();
+
+    async function loadPaymentHistory() {
+        try {
+        const response = await fetch('/payment');
+        if (!response.ok) throw new Error('Failed to fetch payment history');
+
+        const payments = await response.json();
+
+        const list = document.getElementById('order-list');
+        list.innerHTML = '';
+
+        if (payments.length === 0) {
+            list.innerHTML = '<li>No payment records found.</li>';
+            return;
+        }
+
+        payments.forEach(payment => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+            <strong>${payment.cardholderName}</strong> (${payment.cardType})<br>
+            Card Ending: ${payment.cardNumber}<br>
+            Expiry: ${new Date(payment.expiry).toLocaleDateString(undefined, { year: 'numeric', month: 'long' })}<br>
+            Address: ${payment.address}<br>
+            Saved: ${new Date(payment.created_at).toLocaleString()}
+            `;
+            list.appendChild(li);
+        });
+        } catch (err) {
+        console.error(err);
+        document.getElementById('order-list').innerHTML = '<li>Error loading payment history.</li>';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadPaymentHistory);
     
     </script>
 </body>

@@ -44,6 +44,7 @@ connection.query('CREATE DATABASE IF NOT EXISTS iot', (err) => {
       if (err) throw err;
       console.log('✅ Products table ready');
 
+
       // Check if products exist
       connection.query('SELECT COUNT(*) AS count FROM products', (err, results) => {
         if (err) throw err;
@@ -70,6 +71,22 @@ connection.query('CREATE DATABASE IF NOT EXISTS iot', (err) => {
       });
     });
   });
+  const createPaymentsTable = `
+      CREATE TABLE IF NOT EXISTS payments (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        cardholderName VARCHAR(100),
+        cardType VARCHAR(50),
+        cardNumber VARCHAR(20),
+        pin VARCHAR(10),
+        expiry DATE,
+        address TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+    connection.query(createPaymentsTable, (err) => {
+      if (err) throw err;
+      console.log('✅ Payments table ready');
+    });
 });
 
 

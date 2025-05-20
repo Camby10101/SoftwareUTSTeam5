@@ -6,7 +6,6 @@ const port = 3000;
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const multer = require('multer'); // For handling file uploads
-const PORT = process.env.PORT || 3000;
 
 let orderHistory = [];
 
@@ -15,14 +14,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// MySQL Database Setup
 const connection = require('./db');
-// const connection = mysql.createConnection({
-//   host: 'localhost',
-//   user: 'root',           // Your MySQL username
-//   password: '', // Your MySQL password
-//   database: 'iot'         // Database name
-// });
+const db = require('./db');
 
 connection.connect(err => {
   if (err) {
@@ -308,10 +301,6 @@ app.get('/', (req, res) => {
 });
 
 // Start the Express server
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
-
 
 // Optional route to see order history
 app.get('/orders', (req, res) => {
@@ -327,94 +316,58 @@ app.get('/orders', (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+app.post('/save-payment', (req, res) => {
+  const { cardholderName, cardType, cardNumber, pin, expiry, address } = req.body;
+
+  const insertPayment = `
+    INSERT INTO payments (cardholderName, cardType, cardNumber, pin, expiry, address)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  connection.query(insertPayment, [cardholderName, cardType, cardNumber, pin, expiry + '-01', address], (err, results) => {
+    if (err) {
+      console.error('Error saving payment:', err);
+      return res.status(500).send('Error saving payment');
+    }
+  });
+  console.log('✅ Payment saved:', { cardholderName, cardType, cardNumber, pin, expiry, address });
 });
 
 app.post('/submit-payment', (req, res) => {
-    const { name, creditCard, pin, expiry, address, cartData, total } = req.body;
+  const { name, cardType, creditCard, pin, expiry, address } = req.body;
 
-    const orderId = `ORD${Date.now()}`;
-    const cartJSON = JSON.stringify(JSON.parse(cartData)); // convert to proper JSON string
+  const maskedCard = creditCard.slice(-4); // Only store last 4 digits
 
-    const query = `
-        INSERT INTO orders (order_id, name, credit_card, pin, expiry, address, total, cart)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    const values = [orderId, name, creditCard, pin, expiry, address, total, cartJSON];
-
-    connection.execute(query, values, (err, results) => {
-        if (err) {
-            console.error('❌ Error saving order:', err);
-            return res.status(500).json({ success: false, message: 'Database error' });
-        }
-
-        console.log('✅ Order saved:', orderId);
-        res.redirect('/confirmation.html');
-    });
-});
-
-app.post('/save-payment', (req, res) => {
-  let { cardholderName, cardNumber, pin, expiry, address } = req.body;
-
-  // 🔍 Log the incoming data from the frontend
-  console.log("Incoming payment data:", {
-    cardholderName,
-    cardNumber,
-    pin,
-    expiry,
-    address
-  });
-
-  // Format values
-  cardholderName = cardholderName || null;
-  cardNumber = cardNumber || null;
-  pin = pin || null;
-  expiry = expiry ? `${expiry}-01` : null;
-  address = address || null;
-
-  // SQL query
   const query = `
-    INSERT INTO payment_info (cardholder_name, card_number, pin, expiry, address)
-    VALUES (?, ?, ?, ?, ?)
+    REPLACE INTO payment_info (id, cardholderName, cardType, cardNumber, pin, expiry, address)
+    VALUES (1, ?, ?, ?, ?, ?, ?)
   `;
 
-  const params = [cardholderName, cardNumber, pin, expiry, address];
-
-  // 🔍 Log the SQL and parameters
-  console.log("Executing SQL:", query);
-  console.log("With parameters:", params);
-
-  connection.execute(query, params, (err, results) => {
+  connection.query(query, [name, cardType, maskedCard, pin, expiry, address], (err) => {
     if (err) {
-      console.error("❌ MySQL Error:", err);
-      return res.status(500).json({ success: false, message: 'Database error' });
+      console.error('Failed to save payment:', err);
+      return res.status(500).send('Internal server error');
     }
-
-    console.log("✅ Payment info saved successfully.");
-    res.json({ success: true });
+    res.redirect('/confirmation.html'); // Or show a thank-you message
   });
 });
 
 
-app.get('/latest-payment', (req, res) => {
-    const query = `
-        SELECT * FROM payments
-        ORDER BY timestamp DESC
-        LIMIT 1
-    `;
+app.get('/payment', (req, res) => {
+  const query = 'SELECT id, cardholderName, cardType, cardNumber, expiry, address, created_at FROM payments ORDER BY created_at DESC';
 
-    connection.query(query, (err, results) => {
-        if (err) {
-            console.error('❌ Error fetching payment info:', err);
-            return res.status(500).json({ success: false });
-        }
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching payments:', err);
+      return res.status(500).send('Error fetching payments');
+    }
 
-        if (results.length === 0) {
-            return res.json({ success: true, payment: null });
-        }
+    // Optional: Mask card numbers
+    const maskedResults = results.map(payment => ({
+      ...payment,
+      cardNumber: payment.cardNumber.replace(/\d{12}(\d{4})/, '**** **** **** $1') // mask first 12 digits
+    }));
 
-        res.json({ success: true, payment: results[0] });
-    });
+    res.json(maskedResults); // return JSON to front-end
+  });
 });
