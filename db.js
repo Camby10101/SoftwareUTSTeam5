@@ -87,6 +87,20 @@ connection.query('CREATE DATABASE IF NOT EXISTS iot', (err) => {
       if (err) throw err;
       console.log('✅ Payments table ready');
     });
+  const createOrdersTable = `
+    CREATE TABLE IF NOT EXISTS orders (
+      order_id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100),
+      total DECIMAL(10, 2),
+      timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      cart TEXT,
+      address TEXT
+    )
+  `;
+  connection.query(createOrdersTable, (err) => {
+    if (err) throw err;
+    console.log('✅ Orders table ready');
+  });
 });
 
 
