@@ -339,7 +339,7 @@ app.post('/submit-payment', (req, res) => {
   const maskedCard = creditCard.slice(-4); // Only store last 4 digits
 
   const query = `
-    REPLACE INTO payment_info (id, cardholderName, cardType, cardNumber, pin, expiry, address)
+    REPLACE INTO payments (id, cardholderName, cardType, cardNumber, pin, expiry, address)
     VALUES (1, ?, ?, ?, ?, ?, ?)
   `;
 

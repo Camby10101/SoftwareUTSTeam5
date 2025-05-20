@@ -145,12 +145,13 @@ connection.query(createAccessLogTable, (err) => {
     });
   const createOrdersTable = `
     CREATE TABLE IF NOT EXISTS orders (
-      order_id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(100),
-      total DECIMAL(10, 2),
-      timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      cart TEXT,
-      address TEXT
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id VARCHAR(100) UNIQUE,
+    user_email VARCHAR(100),
+    status ENUM('saved', 'submitted', 'cancelled') DEFAULT 'saved',
+    cart JSON,
+    total DECIMAL(10, 2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `;
   connection.query(createOrdersTable, (err) => {
