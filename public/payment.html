@@ -125,6 +125,12 @@
     </footer>
    <script>
         window.addEventListener('DOMContentLoaded', () => {
+            const total = localStorage.getItem('orderTotal');
+            if (total) {
+            document.getElementById('total-price').textContent = total;
+            document.getElementById('total').value = total;
+            }
+
             fetch('/payment')
                 .then(res => res.json())
                 .then(data => {
@@ -140,30 +146,93 @@
                 .catch(err => console.error('Failed to load payment info:', err));
             });
 
-            document.getElementById('payment-form').addEventListener('submit', function (e) {
-            const fullCard = document.getElementById('creditCard').value.trim();
 
-            if (!/^\d{4,}$/.test(fullCard)) {
-                alert("Please enter a valid card number");
-                e.preventDefault();
-                return;
-            }
+            document.getElementById('payment-form').addEventListener('submit', async function (e) {
+    e.preventDefault(); // prevent the form from submitting normally
 
-            if (fullCard.includes('*')) {
-                alert("Please re-enter your full card number before submitting.");
-                e.preventDefault();
-                return;
-            }
+    const fullCard = document.getElementById('creditCard').value.trim();
 
-            const cart = [
-                { productId: 1, name: "Smart Sensor", quantity: 2, price: 29.99 },
-                { productId: 2, name: "IoT Gateway", quantity: 1, price: 99.99 }
-            ];
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    if (!/^\d{4,}$/.test(fullCard)) {
+        alert("Please enter a valid card number");
+        return;
+    }
 
-            document.getElementById('cartData').value = JSON.stringify(cart);
-            document.getElementById('total').value = total.toFixed(2);
-            });
+    if (fullCard.includes('*')) {
+        alert("Please re-enter your full card number before submitting.");
+        return;
+    }
+
+        const total = parseFloat(document.getElementById('total-price').textContent); // or innerText
+
+
+    const cartData = JSON.parse(localStorage.getItem('cart')) || [];
+    //const total = cartData.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    // Then submit the form to save payment info (if needed)
+    document.getElementById('cartData').value = JSON.stringify(cartData);
+    document.getElementById('total').value = total.toFixed(2);
+
+    const email = sessionStorage.getItem('email') || 'guest@example.com';
+    const orderId = `ORD-${Date.now()}`;
+
+console.log('Submitting order with:', {
+  orderId,
+  email,
+  status: 'submitted',
+  cartData,
+  total
+});
+
+    // Save the order in the database
+    const orderResponse = await fetch('/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            orderId,
+            email,
+            status: 'submitted',
+            cartData,
+            total
+        })
+    });
+
+    if (!orderResponse.ok) {
+        alert('Failed to save order.');
+        return;
+    }
+
+    // Optionally clear the cart after order is saved
+    localStorage.removeItem('cart');
+    localStorage.removeItem('orderTotal');
+
+    // Finally, redirect to confirmation page
+    window.location.href = 'confirmation.html';
+});
+
+            // document.getElementById('payment-form').addEventListener('submit', function (e) {
+            // const fullCard = document.getElementById('creditCard').value.trim();
+
+            // if (!/^\d{4,}$/.test(fullCard)) {
+            //     alert("Please enter a valid card number");
+            //     e.preventDefault();
+            //     return;
+            // }
+
+            // if (fullCard.includes('*')) {
+            //     alert("Please re-enter your full card number before submitting.");
+            //     e.preventDefault();
+            //     return;
+            // }
+
+            // const cart = [
+            //     { productId: 1, name: "Smart Sensor", quantity: 2, price: 29.99 },
+            //     { productId: 2, name: "IoT Gateway", quantity: 1, price: 99.99 }
+            // ];
+            // const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            // document.getElementById('cartData').value = JSON.stringify(cart);
+            // document.getElementById('total').value = total.toFixed(2);
+            // });
 
         window.onload = updateTotalPrice;
 

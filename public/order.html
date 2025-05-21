@@ -83,6 +83,65 @@
                 document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
             }
         }
+
+async function loadOrders() {
+    const email = sessionStorage.getItem('email'); // or another way you're tracking the user
+    if (!email) return;
+
+    const res = await fetch(`/orders?email=${encodeURIComponent(email)}`);
+    const data = await res.json();
+
+    console.log("Fetching orders for:", email);
+    console.log("Response data:", data);
+
+    if (!data.success) return;
+
+    const savedOrders = data.orders.filter(o => o.status === 'saved');
+    const historyOrders = data.orders.filter(o => o.status !== 'saved');
+
+    const container = document.createElement('div');
+
+    container.innerHTML += "<h3>Saved Orders</h3>";
+    savedOrders.forEach(o => {
+        container.innerHTML += `
+            <div>
+                <p>Order #${o.order_id} | $${o.total} | <strong>${o.status}</strong></p>
+                <button onclick="submitOrder('${o.order_id}')">Submit</button>
+                <button onclick="cancelOrder('${o.order_id}')">Cancel</button>
+            </div>
+        `;
+    });
+
+    container.innerHTML += "<h3>Order History</h3>";
+    historyOrders.forEach(o => {
+        container.innerHTML += `
+            <div>
+                <p>Order #${o.order_id} | $${o.total} | <strong>${o.status}</strong> | ${new Date(o.created_at).toLocaleString()}</p>
+            </div>
+        `;
+    });
+
+    document.body.appendChild(container);
+}
+
+async function submitOrder(orderId) {
+    await fetch(`/orders/${orderId}/submit`, { method: 'POST' });
+    location.reload();
+}
+
+async function cancelOrder(orderId) {
+    await fetch(`/orders/${orderId}/cancel`, { method: 'POST' });
+    location.reload();
+}
+
+window.onload = function () {
+    displayWelcomeMessage();
+    loadOrders();
+}
+
+
+
+
     </script>
 </body>
 </html>

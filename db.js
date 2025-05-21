@@ -147,7 +147,7 @@ connection.query(createAccessLogTable, (err) => {
     CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id VARCHAR(100) UNIQUE,
-    user_email VARCHAR(100),
+    email VARCHAR(100),
     status ENUM('saved', 'submitted', 'cancelled') DEFAULT 'saved',
     cart JSON,
     total DECIMAL(10, 2),

@@ -300,21 +300,76 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start the Express server
+app.post('/orders', (req, res) => {
+  let { orderId, email, status, cartData, total } = req.body;
+  console.log('Received order:', req.body);
 
-// Optional route to see order history
+  if (!orderId || !email || !cartData || !total || !status) {
+    return res.status(400).json({ success: false, message: 'Missing order data' });
+  }
+
+  // Defensive replacements
+  orderId = orderId || null;
+  email = email || null;
+  status = status || null;
+  total = total || null;
+
+  let cartJSON;
+  try {
+    cartJSON = JSON.stringify(cartData) || null;
+  } catch (err) {
+    console.error('Failed to stringify cartData:', err);
+    cartJSON = null;
+  }
+
+  const query = `
+    INSERT INTO orders (order_id, email, status, cart, total)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  connection.query(query, [orderId, email, status, cartJSON, total], (err) => {
+    if (err) {
+      console.error('❌ Error saving order:', err);
+      return res.status(500).json({ success: false, message: 'Database error' });
+    }
+
+    console.log('✅ Order saved');
+    res.status(200).json({ success: true, message: 'Order saved' });
+  });
+});
+
 app.get('/orders', (req, res) => {
-    const query = 'SELECT * FROM orders ORDER BY timestamp DESC';
+    const { email } = req.query;
+    const query = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
 
-    connection.query(query, (err, results) => {
-        if (err) {
-            console.error('❌ Error retrieving orders:', err);
-            return res.status(500).json({ success: false });
-        }
-
+    connection.execute(query, [email], (err, results) => {
+        if (err) return res.status(500).json({ success: false });
         res.json({ success: true, orders: results });
     });
 });
+
+
+app.post('/orders/:orderId/cancel', (req, res) => {
+    const { orderId } = req.params;
+    const query = `UPDATE orders SET status = 'cancelled' WHERE order_id = ? AND status = 'saved'`;
+
+    connection.execute(query, [orderId], (err, result) => {
+        if (err) return res.status(500).json({ success: false });
+        res.json({ success: true, message: 'Order cancelled.' });
+    });
+});
+
+app.post('/orders/:orderId/submit', (req, res) => {
+    const { orderId } = req.params;
+    const query = `UPDATE orders SET status = 'submitted' WHERE order_id = ? AND status = 'saved'`;
+
+    connection.execute(query, [orderId], (err, result) => {
+        if (err) return res.status(500).json({ success: false });
+        res.json({ success: true, message: 'Order submitted successfully.' });
+    });
+});
+
+
 
 app.post('/save-payment', (req, res) => {
   const { cardholderName, cardType, cardNumber, pin, expiry, address } = req.body;

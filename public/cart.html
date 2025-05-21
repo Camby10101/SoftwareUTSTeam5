@@ -158,6 +158,7 @@ async function loadCart() {
     });
 
     cartContainer.innerHTML += `<h3>Total: $<span id="total">${total.toFixed(2)}</span></h3>`;
+    localStorage.setItem('orderTotal', total.toFixed(2));
 }
 
 function updateQuantity(index, newQty) {
@@ -179,8 +180,8 @@ function removeFromCart(index) {
 }
 
 window.onload = loadCart;
-    
-    </script>
+
+</script>
 </body>
 </html>
 
