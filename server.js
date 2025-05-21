@@ -333,7 +333,16 @@ app.post('/orders', (req, res) => {
       return res.status(500).json({ success: false, message: 'Database error' });
     }
 
-    console.log('✅ Order saved');
+    cartData.forEach(item => {
+      const updateStockQuery = `UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?`;
+      connection.query(updateStockQuery, [item.quantity, item.productId, item.quantity], (err, result) => {
+        if (err) {
+          console.error(`⚠️ Failed to update stock for product ID ${item.productId}`, err);
+        }
+      });
+    });
+
+    console.log('✅ Order saved and stock updated');
     res.status(200).json({ success: true, message: 'Order saved' });
   });
 });

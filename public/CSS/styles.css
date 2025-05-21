@@ -671,6 +671,41 @@ footer li {
   width: 250px;
 }
 
+  #cart-items {
+    padding: 40px; 
+  }
+
+  .cart-item-img {
+    width: 100px;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.cart-container h2 {
+    text-align: center;
+}
+
+ .cart-container {
+    padding-left: 40px;
+    padding-right: 40px; 
+} 
+
+.cart-options {
+    padding-left: 40px;
+    padding-bottom: 20px;
+}
+
+.cart-item-content {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.cart-item-details {
+    flex-grow: 1;
+}
 
 
 

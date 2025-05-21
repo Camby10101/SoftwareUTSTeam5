@@ -34,9 +34,9 @@
         </nav>
     </header>
     
+        <div class="cart-container">
         <h2>Your Cart</h2>
-        <div id="cart-items">
-        </div>
+        <div id="cart-items"></div>
         <!--<div class="cart-container">
             <div class="cart-item">
                 <img src="images/IotEmbeddedSystem.webp">
@@ -68,8 +68,12 @@
         <p>Subtotal: $</p>
         <br>
         <div> -->
+        <div class="cart-options">
             <a href="shop.html"><button class="item-btn">Continue Shopping</button></a>
-            <a href="payment.html"><button class="item-btn">Checkout</button></a>
+            <button class="item-btn" id="checkout-btn">Checkout</button></a>
+        </div>
+        </div>
+
         <!-- </div>
     </div> -->
 
@@ -121,9 +125,11 @@
 async function loadCart() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const cartContainer = document.getElementById('cart-items');
+    const checkoutBtn = document.getElementById('checkout-btn'); 
 
     if (cart.length === 0) {
         cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+        if (checkoutBtn) checkoutBtn.disabled = true; 
         return;
     }
 
@@ -144,6 +150,9 @@ async function loadCart() {
             itemDiv.classList.add('cart-item');
 
             itemDiv.innerHTML = `
+                <div class= "cart-item-content">
+                <img src="${product.image}" alt="${product.name}" class="cart-item-img">
+                <div class= "cart-item-details">
                 <h3>${product.name}</h3>
                 <p>Price: $${parseFloat(product.price).toFixed(2)}</p>
                 <label>Quantity: 
@@ -151,6 +160,8 @@ async function loadCart() {
                 </label>
                 <p>Subtotal: $<span id="subtotal-${index}">${subtotal.toFixed(2)}</span></p>
                 <button onclick="removeFromCart(${index})">Remove</button>
+                </div>
+                </div>
                 <hr/>
             `;
             cartContainer.appendChild(itemDiv);
@@ -159,17 +170,52 @@ async function loadCart() {
 
     cartContainer.innerHTML += `<h3>Total: $<span id="total">${total.toFixed(2)}</span></h3>`;
     localStorage.setItem('orderTotal', total.toFixed(2));
+
+    const invalid = cart.some(item => {
+    const product = allProducts.find(p => p.id === item.productId);
+    return product && item.quantity > product.stock;
+});
+
+checkoutBtn.disabled = invalid;
+
+    if (checkoutBtn) checkoutBtn.disabled = false; 
+
 }
 
-function updateQuantity(index, newQty) {
+async function updateQuantity(index, newQty) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     const qty = parseInt(newQty);
+    const checkoutBtn = document.getElementById('checkout-btn');
 
     if (isNaN(qty) || qty < 1) return;
 
+    const response = await fetch('/getProducts');
+    const data = await response.json();
+    const allProducts = data.products;
+
+    const item = cart[index];
+    const product = allProducts.find(p => p.id === item.productId);
+    if (!product) return;
+
+    if (qty > product.stock) {
+        alert(`${product.name} only has ${product.stock} in stock.`);
+        checkoutBtn.disabled = true; // 🔒 Disable checkout
+        return;
+    }
+
+    // ✅ Update cart
     cart[index].quantity = qty;
     localStorage.setItem('cart', JSON.stringify(cart));
-    loadCart(); // Refresh cart view
+
+    // 🔍 Recheck all cart quantities
+    const invalid = cart.some(item => {
+        const prod = allProducts.find(p => p.id === item.productId);
+        return prod && item.quantity > prod.stock;
+    });
+
+    checkoutBtn.disabled = invalid; // Disable only if invalid quantity exists
+
+    loadCart(); // Refresh view
 }
 
 function removeFromCart(index) {
@@ -180,6 +226,27 @@ function removeFromCart(index) {
 }
 
 window.onload = loadCart;
+
+document.getElementById('checkout-btn').addEventListener('click', async function () {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const response = await fetch('/getProducts');
+    const data = await response.json();
+    const allProducts = data.products;
+
+    for (let i = 0; i < cart.length; i++) {
+        const item = cart[i];
+        const product = allProducts.find(p => p.id === item.productId);
+        if (!product) continue;
+
+        if (item.quantity > product.stock) {
+            alert(`You have ${item.quantity} of "${product.name}" in your cart, but only ${product.stock} in stock.`);
+            return; // ❌ STOP checkout
+        }
+    }
+
+    // ✅ All quantities are valid — proceed to checkout
+    window.location.href = 'payment.html';
+});
 
 </script>
 </body>
