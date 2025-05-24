@@ -165,15 +165,17 @@
 
     async function loadLatestPayment() {
         try {
-            const res = await fetch('/latest-payment');
+            const res = await fetch('/payment');
             const data = await res.json();
 
-            if (data.success && data.payment) {
-                const p = data.payment;
-                document.getElementById('cardholderName').value = p.cardholder_name || p.cardholderName || '';
-                document.getElementById('cardNumber').value = p.card_number || '';
+            if (Array.isArray(data) && data.length > 0) {
+                const p = data[0]; // Most recent payment
+
+                document.getElementById('cardholderName').value = p.cardholderName || '';
+                document.getElementById('cardType').value = p.cardType || '';
+                document.getElementById('cardNumber').value = p.cardNumber || '';
                 document.getElementById('pin').value = p.pin || '';
-                document.getElementById('expiry').value = convertDateFormat(p.expiry);
+                document.getElementById('expiry').value = convertDateFormat(p.expiry || '');
                 document.getElementById('address').value = p.address || '';
             }
         } catch (error) {
