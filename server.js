@@ -379,9 +379,9 @@ app.post('/orders/:orderId/submit', (req, res) => {
     });
 });
 
-
-
 app.post('/payment', (req, res) => {
+  console.log('POST /payment route hit');
+  console.log('Payment POST body:', req.body);
   const { cardholderName, cardType, cardNumber, pin, expiry, address } = req.body;
 
   const insertPayment = `

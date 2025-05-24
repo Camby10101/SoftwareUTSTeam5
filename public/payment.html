@@ -38,12 +38,10 @@
         <br>
         <p>Total: $<span id="total-price">0.00</span></p>
         <br>
-        <form id="payment-form" action="/save-payment" method="POST">
-            <div>
-                <label for="name">Full Name:</label>
-                <input type="text" id="name" name="name" class="fill-space" placeholder="Enter your Full Name" required>
-            </div>
-            <br>
+        <form id="payment-form" action="/payment" method="POST">
+            <label for="cardholderName">Cardholder Name:</label>
+            <input type="text" id="cardholderName" name="cardholderName" class="fill-space" placeholder="Enter your Full Name" required><br>
+
             <div>
                 <label for="cardType">Select Card Type:</label>
                     <select id="cardType" name="cardType" class="card-dropdown" required>
@@ -53,26 +51,18 @@
                     <option value="amex">American Express</option>
                     </select>
             </div>
-            <br>
-            <div>
-                <label for="creditCard">Credit Card Number:</label>
-                <input type="password" id="creditCard" name="creditCard" class="fill-space" placeholder="Enter your Card Number" required>
-            </div>
-            <br>
-            <div>
-                <label for="pin">PIN:</label>
-                <input type="password" id="pin" name="pin" class="fill-space" placeholder="Enter your PIN" required>
-            </div>
-            <br>
-            <div>
-                <label for="expiry">Expiry Date:</label>
-                <input type="month" id="expiry" name="expiry" class="fill-space" required>
-            </div>
-            <br>
-            <div>
-                <label for="address">Address:</label>
-                <textarea id="address" name="address" class="fill-space" placeholder="Enter your address" rows="4" required></textarea>
-            </div>
+
+            <label for="cardNumber">Card Number:</label>
+            <input type="text" id="cardNumber" name="cardNumber" class="fill-space" placeholder="Enter your Card Number" ><br>
+
+            <label for="pin">PIN:</label>
+            <input type="text" id="pin" name="pin" class="fill-space" value=""><br>
+
+            <label for="expiry">Expiry Date:</label>
+            <input type="month" id="expiry" name="expiry" class="fill-space" placeholder="Enter your PIN" required><br>
+
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" class="fill-space" placeholder="Enter your address" rows="4"></textarea><br>
 
             <input type="hidden" id="cartData" name="cartData">
             <input type="hidden" id="total" name="total">
@@ -124,6 +114,10 @@
         </div>
     </footer>
    <script>
+        // Display total price from localStorage and get payment details
+        
+
+        //Payment Form Submission
         document.getElementById('payment-form').addEventListener('submit', async function (e) {
             e.preventDefault();
 
@@ -157,7 +151,6 @@
 
                 if (!orderRes.ok) {
                     alert('Failed to save order.');
-                    return;
                 }
 
                 const paymentRes = await fetch('/payment', {
@@ -186,6 +179,28 @@
                 alert('An error occurred while submitting your order.');
             }
         });
+
+        async function loadLatestPayment() {
+            try {
+                const res = await fetch('/payment');
+                const data = await res.json();
+
+                if (Array.isArray(data) && data.length > 0) {
+                    const p = data[0]; // Most recent payment
+
+                    document.getElementById('cardholderName').value = p.cardholderName || '';
+                    document.getElementById('cardType').value = p.cardType || '';
+                    document.getElementById('cardNumber').value = p.cardNumber || '';
+                    document.getElementById('pin').value = p.pin || '';
+                    document.getElementById('expiry').value = convertDateFormat(p.expiry || '');
+                    document.getElementById('address').value = p.address || '';
+                }
+            } catch (error) {
+                console.error('Error loading payment info:', error);
+            }
+        }
+
+        loadLatestPayment();
 
     </script>
 </div>
