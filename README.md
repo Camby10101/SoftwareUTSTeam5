@@ -21,3 +21,5 @@ This is the store front and display portal (DP) for the **IoTBay** website. The 
    ```
    http://localhost:3000
    ```
+
+GitHub: https://github.com/Camby10101/SoftwareUTSTeam5.git
