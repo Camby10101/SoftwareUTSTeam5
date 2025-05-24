@@ -394,27 +394,9 @@ app.post('/save-payment', (req, res) => {
       console.error('Error saving payment:', err);
       return res.status(500).send('Error saving payment');
     }
+    res.redirect('/confirmation.html');
   });
   console.log('✅ Payment saved:', { cardholderName, cardType, cardNumber, pin, expiry, address });
-});
-
-app.post('/submit-payment', (req, res) => {
-  const { name, cardType, creditCard, pin, expiry, address } = req.body;
-
-  const maskedCard = creditCard.slice(-4); // Only store last 4 digits
-
-  const query = `
-    REPLACE INTO payments (id, cardholderName, cardType, cardNumber, pin, expiry, address)
-    VALUES (1, ?, ?, ?, ?, ?, ?)
-  `;
-
-  connection.query(query, [name, cardType, maskedCard, pin, expiry, address], (err) => {
-    if (err) {
-      console.error('Failed to save payment:', err);
-      return res.status(500).send('Internal server error');
-    }
-    res.redirect('/confirmation.html'); // Or show a thank-you message
-  });
 });
 
 

@@ -29,10 +29,6 @@ connection.query('CREATE DATABASE IF NOT EXISTS iot', (err) => {
   connection.changeUser({ database: 'iot' }, (err) => {
     if (err) throw err;
 
-
-
-
-
     const createCustomersTable = `
   CREATE TABLE IF NOT EXISTS customers (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -64,7 +60,7 @@ connection.query('SELECT COUNT(*) AS count FROM customers', (err, results) => {
       console.log('✅ Sample customers inserted');
     });
   } else {
-    console.log(`${count} customers already exist.`);
+    console.log(`❗ ${count} customer(s) already exist.`);
   }
 });
 
@@ -122,7 +118,7 @@ connection.query(createAccessLogTable, (err) => {
             console.log('✅ Sample products inserted');
           });
         } else {
-          console.log(`${count} product(s) already exist. No need to insert sample data.`);
+          console.log(`❗ ${count} product(s) already exist. No need to insert sample data.`);
         }
       });
     });
