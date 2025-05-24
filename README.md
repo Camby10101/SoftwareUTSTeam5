@@ -1,6 +1,6 @@
 # IoTBay (Introduction to Software Development)
 
-This is the store front and display portal (DP) for the **IoTBay** website. The application is built using **HTML**, **JavaScript**, and **Node.js**.
+This is the store front and display portal (DP) for the **IoTBay** website. The application is built using **HTML**, **JavaScript**, **CSS**, and **Node.js**.
 
 ## Requirements
 
