@@ -17,6 +17,7 @@ app.use(bodyParser.json());
 const connection = require('./db');
 const db = require('./db');
 
+
 connection.connect(err => {
   if (err) {
     console.error('Error connecting:', err.stack);
@@ -333,16 +334,7 @@ app.post('/orders', (req, res) => {
       return res.status(500).json({ success: false, message: 'Database error' });
     }
 
-    cartData.forEach(item => {
-      const updateStockQuery = `UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?`;
-      connection.query(updateStockQuery, [item.quantity, item.productId, item.quantity], (err, result) => {
-        if (err) {
-          console.error(`⚠️ Failed to update stock for product ID ${item.productId}`, err);
-        }
-      });
-    });
-
-    console.log('✅ Order saved and stock updated');
+    console.log('✅ Order saved');
     res.status(200).json({ success: true, message: 'Order saved' });
   });
 });
@@ -378,9 +370,9 @@ app.post('/orders/:orderId/submit', (req, res) => {
     });
 });
 
-
-
-app.post('/save-payment', (req, res) => {
+app.post('/payment', (req, res) => {
+  console.log('POST /payment route hit');
+  console.log('Payment POST body:', req.body);
   const { cardholderName, cardType, cardNumber, pin, expiry, address } = req.body;
 
   const insertPayment = `
@@ -388,32 +380,18 @@ app.post('/save-payment', (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?)
   `;
 
-  connection.query(insertPayment, [cardholderName, cardType, cardNumber, pin, expiry + '-01', address], (err, results) => {
-    if (err) {
-      console.error('Error saving payment:', err);
-      return res.status(500).send('Error saving payment');
+  connection.query(
+    insertPayment,
+    [cardholderName, cardType, cardNumber, pin, expiry + '-01', address],
+    (err, results) => {
+      if (err) {
+        console.error('Error saving payment:', err);
+        return res.status(500).send('Error saving payment');
+      }
+      console.log('✅ Payment saved:', { cardholderName, cardType, cardNumber, pin, expiry, address });
+      res.status(200).send('Payment saved');
     }
-  });
-  console.log('✅ Payment saved:', { cardholderName, cardType, cardNumber, pin, expiry, address });
-});
-
-app.post('/submit-payment', (req, res) => {
-  const { name, cardType, creditCard, pin, expiry, address } = req.body;
-
-  const maskedCard = creditCard.slice(-4); // Only store last 4 digits
-
-  const query = `
-    REPLACE INTO payments (id, cardholderName, cardType, cardNumber, pin, expiry, address)
-    VALUES (1, ?, ?, ?, ?, ?, ?)
-  `;
-
-  connection.query(query, [name, cardType, maskedCard, pin, expiry, address], (err) => {
-    if (err) {
-      console.error('Failed to save payment:', err);
-      return res.status(500).send('Internal server error');
-    }
-    res.redirect('/confirmation.html'); // Or show a thank-you message
-  });
+  );
 });
 
 
