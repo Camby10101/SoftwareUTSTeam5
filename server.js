@@ -381,7 +381,7 @@ app.post('/orders/:orderId/submit', (req, res) => {
 
 
 
-app.post('/save-payment', (req, res) => {
+app.post('/payment', (req, res) => {
   const { cardholderName, cardType, cardNumber, pin, expiry, address } = req.body;
 
   const insertPayment = `
@@ -389,14 +389,18 @@ app.post('/save-payment', (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?)
   `;
 
-  connection.query(insertPayment, [cardholderName, cardType, cardNumber, pin, expiry + '-01', address], (err, results) => {
-    if (err) {
-      console.error('Error saving payment:', err);
-      return res.status(500).send('Error saving payment');
+  connection.query(
+    insertPayment,
+    [cardholderName, cardType, cardNumber, pin, expiry + '-01', address],
+    (err, results) => {
+      if (err) {
+        console.error('Error saving payment:', err);
+        return res.status(500).send('Error saving payment');
+      }
+      console.log('✅ Payment saved:', { cardholderName, cardType, cardNumber, pin, expiry, address });
+      res.status(200).send('Payment saved');
     }
-    res.redirect('/confirmation.html');
-  });
-  console.log('✅ Payment saved:', { cardholderName, cardType, cardNumber, pin, expiry, address });
+  );
 });
 
 

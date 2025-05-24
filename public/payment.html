@@ -38,7 +38,7 @@
         <br>
         <p>Total: $<span id="total-price">0.00</span></p>
         <br>
-        <form id="payment-form" action="/submit-payment" method="POST">
+        <form id="payment-form" action="/save-payment" method="POST">
             <div>
                 <label for="name">Full Name:</label>
                 <input type="text" id="name" name="name" class="fill-space" placeholder="Enter your Full Name" required>
@@ -124,174 +124,68 @@
         </div>
     </footer>
    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            const total = localStorage.getItem('orderTotal');
-            if (total) {
-            document.getElementById('total-price').textContent = total;
-            document.getElementById('total').value = total;
-            }
-
-            fetch('/payment')
-                .then(res => res.json())
-                .then(data => {
-                if (!data || Object.keys(data).length === 0) return;
-
-                document.getElementById('name').value = data.cardholderName || '';
-                document.getElementById('cardType').value = data.cardType || '';
-                document.getElementById('creditCard').value = '**** **** **** ' + data.cardNumber; // Masked
-                document.getElementById('pin').value = data.pin || '';
-                document.getElementById('expiry').value = data.expiry || '';
-                document.getElementById('address').value = data.address || '';
-                })
-                .catch(err => console.error('Failed to load payment info:', err));
-            });
-
-
-            document.getElementById('payment-form').addEventListener('submit', async function (e) {
-    e.preventDefault(); // prevent the form from submitting normally
-
-    const fullCard = document.getElementById('creditCard').value.trim();
-
-    if (!/^\d{4,}$/.test(fullCard)) {
-        alert("Please enter a valid card number");
-        return;
-    }
-
-    if (fullCard.includes('*')) {
-        alert("Please re-enter your full card number before submitting.");
-        return;
-    }
-
-        const total = parseFloat(document.getElementById('total-price').textContent); // or innerText
-
-
-    const cartData = JSON.parse(localStorage.getItem('cart')) || [];
-    //const total = cartData.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-    // Then submit the form to save payment info (if needed)
-    document.getElementById('cartData').value = JSON.stringify(cartData);
-    document.getElementById('total').value = total.toFixed(2);
-
-    const email = sessionStorage.getItem('email') || 'guest@example.com';
-    const orderId = `ORD-${Date.now()}`;
-
-    console.log('Submitting order with:', {
-    orderId,
-    email,
-    status: 'submitted',
-    cartData,
-    total
-    });
-
-    // Save the order in the database
-    const orderResponse = await fetch('/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            orderId,
-            email,
-            status: 'submitted',
-            cartData,
-            total
-        })
-    });
-
-    await fetch('/payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            cardholderName: document.getElementById('name').value,
-            cardType: document.getElementById('cardType').value,
-            cardNumber: fullCard,
-            pin: document.getElementById('pin').value,
-            expiry: document.getElementById('expiry').value,
-            address: document.getElementById('address').value
-        })
-    });
-
-    if (!orderResponse.ok) {
-        alert('Failed to save order.');
-        return;
-    }
-
-    // Optionally clear the cart after order is saved
-    localStorage.removeItem('cart');
-    localStorage.removeItem('orderTotal');
-
-    // Finally, redirect to confirmation page
-    window.location.href = 'confirmation.html';
-
-    });
-
-        window.onload = updateTotalPrice;
-
-        fetch('/orders')
-        .then(res => res.json())
-        .then(data => {
-            const container = document.getElementById('orders-container');
-            if (data.success) {
-            data.orders.forEach(order => {
-                const div = document.createElement('div');
-                div.innerHTML = `
-                <hr>
-                <strong>Order ID:</strong> ${order.order_id}<br>
-                <strong>Name:</strong> ${order.name}<br>
-                <strong>Total:</strong> $${order.total}<br>
-                <strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()}<br>
-                <strong>Cart:</strong> ${order.cart}<br>
-                `;
-                container.appendChild(div);
-            });
-            }
-        });
-
         document.getElementById('payment-form').addEventListener('submit', async function (e) {
-            e.preventDefault(); // prevent the form from submitting normally
+            e.preventDefault();
 
-            const fullCard = document.getElementById('creditCard').value.trim();
-
-            if (!/^\d{4,}$/.test(fullCard)) {
-                alert("Please enter a valid card number");
+            const creditCard = document.getElementById('creditCard').value.trim();
+            if (!/^\d{12,19}$/.test(creditCard)) {
+                alert("Please enter a valid credit card number.");
+                return;
+            }
+            if (creditCard.includes('*')) {
+                alert("Please re-enter your full credit card number.");
                 return;
             }
 
-            if (fullCard.includes('*')) {
-                alert("Please re-enter your full card number before submitting.");
-                return;
-            }
+            const total = parseFloat(document.getElementById('total-price').textContent);
+            const cartData = JSON.parse(localStorage.getItem('cart')) || [];
+            const email = sessionStorage.getItem('email') || 'guest@example.com';
+            const orderId = `ORD-${Date.now()}`;
 
-            // Prepare data
-            const paymentData = {
-                cardholderName: document.getElementById('name').value,
-                cardType: document.getElementById('cardType').value,
-                cardNumber: fullCard,
-                pin: document.getElementById('pin').value,
-                expiry: document.getElementById('expiry').value,
-                address: document.getElementById('address').value
-            };
-
-            // Send to backend
             try {
-                const response = await fetch('/payment', {
+                const orderRes = await fetch('/orders', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(paymentData)
+                    body: JSON.stringify({
+                        orderId,
+                        email,
+                        status: 'submitted',
+                        cartData,
+                        total
+                    })
                 });
 
-                if (!response.ok) {
-                    alert('Failed to save payment information.');
+                if (!orderRes.ok) {
+                    alert('Failed to save order.');
                     return;
                 }
 
-                alert('Payment information saved successfully!');
-                // Optionally clear form or redirect
+                const paymentRes = await fetch('/payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cardholderName: document.getElementById('name').value,
+                        cardType: document.getElementById('cardType').value,
+                        cardNumber: creditCard,
+                        pin: document.getElementById('pin').value,
+                        expiry: document.getElementById('expiry').value,
+                        address: document.getElementById('address').value
+                    })
+                });
+
+                if (!paymentRes.ok) {
+                    alert('Failed to save payment.');
+                    return;
+                }
+
+                localStorage.removeItem('cart');
+                localStorage.removeItem('orderTotal');
                 window.location.href = 'confirmation.html';
             } catch (err) {
-                console.error('Error submitting payment:', err);
-                alert('Error occurred while submitting payment.');
+                console.error('Submission error:', err);
+                alert('An error occurred while submitting your order.');
             }
         });
-
 
     </script>
 </div>
