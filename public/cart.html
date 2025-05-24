@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="CSS/styles.css">
 
 </head>
+
 <body onload="displayWelcomeMessage()">
     <header class="header-container">
         <div class="header-img">
@@ -33,50 +35,17 @@
             </ul>
         </nav>
     </header>
-    
-        <div class="cart-container">
+
+    <div class="cart-container">
         <h2>Your Cart</h2>
         <div id="cart-items"></div>
-        <!--<div class="cart-container">
-            <div class="cart-item">
-                <img src="images/IotEmbeddedSystem.webp">
-                <div class="item-description">
-                    <p>IOT Sensor something something</p>
-                    <p>$300.00</p>
-                    <button>REMOVE</button>
-                    <button>- 1 +</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div>
-        <div class="cart-container">
-            <div class="cart-item">
-                <img src="images/IotEmbeddedSystem.webp">
-                <div class="item-description">
-                    <p>IOT Sensor something something</p>
-                    <p>$300.00</p>
-                    <button>REMOVE</button>
-                    <button>- 1 +</button>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
-    <!-- <div class="spacing">
-        <p>Subtotal: $</p>
-        <br>
-        <div> -->
         <div class="cart-options">
-            <a href="shop.html"><button class="item-btn">Continue Shopping</button></a>
+            <button class="item-btn" id="save-order-btn">Save Order</button>
+            <button class="item-btn" id="cancel-btn">Cancel Order</button>
             <button class="item-btn" id="checkout-btn">Checkout</button></a>
         </div>
-        </div>
-
-        <!-- </div>
-    </div> -->
-
+    </div>
 
     <footer>
         <div class="footer-content">
@@ -114,7 +83,7 @@
             <p>&copy; 2025 IoTBay. All rights reserved.</p>
         </div>
     </footer>
-   <script>
+    <script>
         function displayWelcomeMessage() {
             const username = sessionStorage.getItem('username');
             if (username) {
@@ -122,137 +91,170 @@
             }
         }
 
-async function loadCart() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const cartContainer = document.getElementById('cart-items');
-    const checkoutBtn = document.getElementById('checkout-btn'); 
+        async function loadCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartContainer = document.getElementById('cart-items');
+            const checkoutBtn = document.getElementById('checkout-btn');
 
-    if (cart.length === 0) {
-        cartContainer.innerHTML = "<p>Your cart is empty.</p>";
-        if (checkoutBtn) checkoutBtn.disabled = true; 
-        return;
-    }
+            if (cart.length === 0) {
+                cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+                if (checkoutBtn) checkoutBtn.disabled = true;
+                return;
+            }
 
-    const response = await fetch('/getProducts');
-    const data = await response.json();
-    const allProducts = data.products;
+            const response = await fetch('/getProducts');
+            const data = await response.json();
+            const allProducts = data.products;
 
-    cartContainer.innerHTML = '';
-    let total = 0;
+            cartContainer.innerHTML = '';
+            let total = 0;
 
-    cart.forEach((item, index) => {
-        const product = allProducts.find(p => p.id === item.productId);
-        if (product) {
-            const subtotal = parseFloat(product.price) * item.quantity;
-            total += subtotal;
+            cart.forEach((item, index) => {
+                const product = allProducts.find(p => p.id === item.productId);
+                if (product) {
+                    const subtotal = parseFloat(product.price) * item.quantity;
+                    total += subtotal;
 
-            const itemDiv = document.createElement('div');
-            itemDiv.classList.add('cart-item');
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('cart-item');
 
-            itemDiv.innerHTML = `
-                <div class= "cart-item-content">
-                <img src="${product.image}" alt="${product.name}" class="cart-item-img">
-                <div class= "cart-item-details">
-                <h3>${product.name}</h3>
-                <p>Price: $${parseFloat(product.price).toFixed(2)}</p>
-                <label>Quantity: 
-                    <input type="number" min="1" max="${product.stock}" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)">
-                </label>
-                <p>Subtotal: $<span id="subtotal-${index}">${subtotal.toFixed(2)}</span></p>
-                <button onclick="removeFromCart(${index})">Remove</button>
-                </div>
-                </div>
-                <hr/>
-            `;
-            cartContainer.appendChild(itemDiv);
+                    itemDiv.innerHTML = `
+                    <div class= "cart-item-content">
+                    <img src="${product.image}" alt="${product.name}" class="cart-item-img">
+                    <div class= "cart-item-details">
+                    <h3>${product.name}</h3>
+                    <p>Price: $${parseFloat(product.price).toFixed(2)}</p>
+                    <label>Quantity: 
+                        <input type="number" min="1" max="${product.stock}" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)">
+                    </label>
+                    <p>Subtotal: $<span id="subtotal-${index}">${subtotal.toFixed(2)}</span></p>
+                    <button onclick="removeFromCart(${index})">Remove</button>
+                    </div>
+                    </div>
+                    <hr/>
+                `;
+                    cartContainer.appendChild(itemDiv);
+                }
+            });
+
+            cartContainer.innerHTML += `<h3>Total: $<span id="total">${total.toFixed(2)}</span></h3>`;
+            localStorage.setItem('orderTotal', cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2));
+
+            const invalid = cart.some(item => {
+                const product = allProducts.find(p => p.id === item.productId);
+                return product && item.quantity > product.stock;
+            });
+
+            checkoutBtn.disabled = invalid;
+
+            if (checkoutBtn) checkoutBtn.disabled = false;
+
         }
-    });
 
-    cartContainer.innerHTML += `<h3>Total: $<span id="total">${total.toFixed(2)}</span></h3>`;
-    localStorage.setItem('orderTotal', total.toFixed(2));
+        async function updateQuantity(index, newQty) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const qty = parseInt(newQty);
+            const checkoutBtn = document.getElementById('checkout-btn');
 
-    const invalid = cart.some(item => {
-    const product = allProducts.find(p => p.id === item.productId);
-    return product && item.quantity > product.stock;
-});
+            if (isNaN(qty) || qty < 1) return;
 
-checkoutBtn.disabled = invalid;
+            const response = await fetch('/getProducts');
+            const data = await response.json();
+            const allProducts = data.products;
 
-    if (checkoutBtn) checkoutBtn.disabled = false; 
+            const item = cart[index];
+            const product = allProducts.find(p => p.id === item.productId);
+            if (!product) return;
 
-}
+            if (qty > product.stock) {
+                alert(`${product.name} only has ${product.stock} in stock.`);
+                checkoutBtn.disabled = true; 
+                return;
+            }
 
-async function updateQuantity(index, newQty) {
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const qty = parseInt(newQty);
-    const checkoutBtn = document.getElementById('checkout-btn');
+            cart[index].quantity = qty;
+            localStorage.setItem('cart', JSON.stringify(cart));
 
-    if (isNaN(qty) || qty < 1) return;
+            const invalid = cart.some(item => {
+                const prod = allProducts.find(p => p.id === item.productId);
+                return prod && item.quantity > prod.stock;
+            });
 
-    const response = await fetch('/getProducts');
-    const data = await response.json();
-    const allProducts = data.products;
+            checkoutBtn.disabled = invalid; 
 
-    const item = cart[index];
-    const product = allProducts.find(p => p.id === item.productId);
-    if (!product) return;
-
-    if (qty > product.stock) {
-        alert(`${product.name} only has ${product.stock} in stock.`);
-        checkoutBtn.disabled = true; // 🔒 Disable checkout
-        return;
-    }
-
-    // ✅ Update cart
-    cart[index].quantity = qty;
-    localStorage.setItem('cart', JSON.stringify(cart));
-
-    // 🔍 Recheck all cart quantities
-    const invalid = cart.some(item => {
-        const prod = allProducts.find(p => p.id === item.productId);
-        return prod && item.quantity > prod.stock;
-    });
-
-    checkoutBtn.disabled = invalid; // Disable only if invalid quantity exists
-
-    loadCart(); // Refresh view
-}
-
-function removeFromCart(index) {
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    cart.splice(index, 1);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    loadCart(); // Refresh cart view
-}
-
-window.onload = loadCart;
-
-document.getElementById('checkout-btn').addEventListener('click', async function () {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const response = await fetch('/getProducts');
-    const data = await response.json();
-    const allProducts = data.products;
-
-    for (let i = 0; i < cart.length; i++) {
-        const item = cart[i];
-        const product = allProducts.find(p => p.id === item.productId);
-        if (!product) continue;
-
-        if (item.quantity > product.stock) {
-            alert(`You have ${item.quantity} of "${product.name}" in your cart, but only ${product.stock} in stock.`);
-            return; // ❌ STOP checkout
+            loadCart(); 
         }
-    }
 
-    // ✅ All quantities are valid — proceed to checkout
-    window.location.href = 'payment.html';
-});
+        function removeFromCart(index) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart(); 
+            localStorage.setItem('orderTotal', cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2));
+        }
 
-</script>
+        window.onload = loadCart;
+
+        document.getElementById('cancel-btn').addEventListener('click', () => {
+            const confirmCancel = confirm('Are you sure you want to cancel your order? This will remove all items from your cart.');
+
+            if (confirmCancel) {
+                localStorage.removeItem('cart');
+                localStorage.removeItem('orderTotal');
+                loadCart(); 
+                alert('Your order has been cancelled and the cart has been cleared.');
+            }
+        });
+
+        document.getElementById('save-order-btn').addEventListener('click', async () => {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const email = sessionStorage.getItem('email');
+            const total = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
+            const orderId = `ORD-${Date.now()}`;
+
+            const res = await fetch('/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    orderId,
+                    email,
+                    status: 'saved',
+                    cartData: cart,
+                    total
+                })
+            });
+
+            if (res.ok) {
+                alert('Order saved successfully!');
+                localStorage.removeItem('cart');
+                window.location.href = 'user.html';
+            } else {
+                alert('You must be logged in to access this feature.');
+            }
+        });
+
+        document.getElementById('checkout-btn').addEventListener('click', async function () {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const response = await fetch('/getProducts');
+            const data = await response.json();
+            const allProducts = data.products;
+
+            for (let i = 0; i < cart.length; i++) {
+                const item = cart[i];
+                const product = allProducts.find(p => p.id === item.productId);
+                if (!product) continue;
+
+                if (item.quantity > product.stock) {
+                    alert(`You have ${item.quantity} of "${product.name}" in your cart, but only ${product.stock} in stock.`);
+                    return; 
+                }
+            }
+
+            localStorage.setItem('orderTotal', cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2));
+            window.location.href = 'payment.html';
+        });
+
+    </script>
 </body>
+
 </html>
-
-
-
-
-

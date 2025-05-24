@@ -98,106 +98,106 @@ app.listen(port, () => {
 
 // Fetch Registration Details for a Logged-in User
 app.get('/user/details', (req, res) => {
-    const { email } = req.query;
-    if (!email) return res.status(400).json({ success: false, message: 'Email required' });
-  
-    const query = 'SELECT fullname, email, phone FROM customers WHERE email = ?';
-    connection.execute(query, [email], (err, results) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ success: false, message: 'Database error' });
-      }
-      if (results.length === 0) return res.status(404).json({ success: false, message: 'User not found' });
-  
-      // Send the user registration details back
-      res.json({
-        success: true,
-        user: results[0],
-      });
+  const { email } = req.query;
+  if (!email) return res.status(400).json({ success: false, message: 'Email required' });
+
+  const query = 'SELECT fullname, email, phone FROM customers WHERE email = ?';
+  connection.execute(query, [email], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: 'Database error' });
+    }
+    if (results.length === 0) return res.status(404).json({ success: false, message: 'User not found' });
+
+    // Send the user registration details back
+    res.json({
+      success: true,
+      user: results[0],
     });
   });
+});
 
-  // Get access logs by user_id and specific date
+// Get access logs by user_id and specific date
 app.get('/user/logs', (req, res) => {
-    const { user_id, date } = req.query;
-  
-    if (!user_id || !date) {
-      return res.status(400).json({ success: false, message: 'User ID and date are required' });
-    }
-  
-    const query = `
+  const { user_id, date } = req.query;
+
+  if (!user_id || !date) {
+    return res.status(400).json({ success: false, message: 'User ID and date are required' });
+  }
+
+  const query = `
       SELECT login_time, logout_time
       FROM accesslog
       WHERE user_id = ?
       AND DATE(login_time) = ?
       ORDER BY login_time DESC
     `;
-  
-    connection.execute(query, [user_id, date], (err, results) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).json({ success: false, message: 'Database error' });
-      }
-  
-      if (results.length === 0) {
-        return res.status(404).json({ success: false, message: 'No logs found for that date' });
-      }
-  
-      res.json({ success: true, logs: results });
-    });
+
+  connection.execute(query, [user_id, date], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ success: false, message: 'Database error' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: 'No logs found for that date' });
+    }
+
+    res.json({ success: true, logs: results });
   });
+});
 
 
 // Cancel (delete) user registration
 app.delete('/user', (req, res) => {
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ success: false, message: 'Email is required' });
-  
-    // Only delete user from customers, keep accesslog entries
-    const query = 'DELETE FROM customers WHERE email = ?';
-  
-    connection.execute(query, [email], (err, result) => {
-      if (err) {
-        console.error('Error deleting user:', err);
-        return res.status(500).json({ success: false, message: 'Database error' });
-      }
-  
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ success: false, message: 'User not found' });
-      }
-  
-      res.json({ success: true, message: 'User registration cancelled, access logs retained.' });
-    });
-  });
-    
-  // Update user registration details (including email)
-app.put('/user/update', (req, res) => {
-    const { originalEmail, newEmail, fullname, phone, password } = req.body;
-  
-    if (!originalEmail || !newEmail || !fullname || !phone || !password) {
-      return res.status(400).json({ success: false, message: 'All fields are required' });
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ success: false, message: 'Email is required' });
+
+  // Only delete user from customers, keep accesslog entries
+  const query = 'DELETE FROM customers WHERE email = ?';
+
+  connection.execute(query, [email], (err, result) => {
+    if (err) {
+      console.error('Error deleting user:', err);
+      return res.status(500).json({ success: false, message: 'Database error' });
     }
-  
-    const query = `
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.json({ success: true, message: 'User registration cancelled, access logs retained.' });
+  });
+});
+
+// Update user registration details (including email)
+app.put('/user/update', (req, res) => {
+  const { originalEmail, newEmail, fullname, phone, password } = req.body;
+
+  if (!originalEmail || !newEmail || !fullname || !phone || !password) {
+    return res.status(400).json({ success: false, message: 'All fields are required' });
+  }
+
+  const query = `
       UPDATE customers 
       SET fullname = ?, phone = ?, password = ?, email = ?
       WHERE email = ?
     `;
-  
-    connection.execute(query, [fullname, phone, password, newEmail, originalEmail], (err, result) => {
-      if (err) {
-        console.error('Update error:', err);
-        return res.status(500).json({ success: false, message: 'Database error' });
-      }
-  
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ success: false, message: 'User not found' });
-      }
-  
-      res.json({ success: true, message: 'Profile updated successfully' });
-    });
+
+  connection.execute(query, [fullname, phone, password, newEmail, originalEmail], (err, result) => {
+    if (err) {
+      console.error('Update error:', err);
+      return res.status(500).json({ success: false, message: 'Database error' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.json({ success: true, message: 'Profile updated successfully' });
   });
-  
+});
+
 
 // Multer setup for storing images in a folder called "uploads"
 const storage = multer.diskStorage({
@@ -279,17 +279,17 @@ app.get('/getProducts', (req, res) => {
 });
 
 app.get('/checkout', (req, res) => {
-    const query = 'SELECT SUM(price) AS total_price FROM products';
+  const query = 'SELECT SUM(price) AS total_price FROM products';
 
-    connection.execute(query, (err, results) => {
-        if (err) {
-            console.error('Error fetching total price: ' + err.stack);
-            return res.status(500).send('Server Error');
-        }
+  connection.execute(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching total price: ' + err.stack);
+      return res.status(500).send('Server Error');
+    }
 
-        const totalPrice = results[0].total_price || 0; // Handle case where no products exist
-        res.render('checkout', { totalPrice: totalPrice });
-    });
+    const totalPrice = results[0].total_price || 0; // Handle case where no products exist
+    res.render('checkout', { totalPrice: totalPrice });
+  });
 });
 
 // Serve static files (HTML, CSS, JS)
@@ -329,96 +329,152 @@ app.post('/orders', (req, res) => {
 
   connection.query(query, [orderId, email, status, cartJSON, total], (err) => {
     if (err) {
-      console.error('❌ Error saving order:', err);
+      console.error('Error saving order:', err);
       return res.status(500).json({ success: false, message: 'Database error' });
     }
 
-    cartData.forEach(item => {
-      const updateStockQuery = `UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?`;
-      connection.query(updateStockQuery, [item.quantity, item.productId, item.quantity], (err, result) => {
-        if (err) {
-          console.error(`⚠️ Failed to update stock for product ID ${item.productId}`, err);
-        }
+    if (status === 'submitted') {
+      cartData.forEach(item => {
+        const updateStockQuery = `UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?`;
+        connection.query(updateStockQuery, [item.quantity, item.productId, item.quantity], (err, result) => {
+          if (err) {
+            console.error(`Failed to update stock for product ID ${item.productId}`, err);
+          }
+        });
       });
-    });
+    }
 
-    console.log('✅ Order saved and stock updated');
+    console.log('Order saved and stock updated');
     res.status(200).json({ success: true, message: 'Order saved' });
   });
 });
 
 app.get('/orders', (req, res) => {
-    const { email } = req.query;
-    const query = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
+  const { email } = req.query;
+  const query = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
 
-    connection.execute(query, [email], (err, results) => {
-        if (err) return res.status(500).json({ success: false });
-        res.json({ success: true, orders: results });
-    });
+  connection.execute(query, [email], (err, results) => {
+    if (err) return res.status(500).json({ success: false });
+    res.json({ success: true, orders: results });
+  });
+});
+
+app.get('/orders/search', (req, res) => {
+  const { email, orderId, date } = req.query;
+
+  if (!email) return res.status(400).json({ success: false, message: 'Email required' });
+
+  let query = 'SELECT * FROM orders WHERE email = ?';
+  const params = [email];
+
+  if (orderId) {
+    query += ' AND order_id LIKE ?';
+    params.push(`%${orderId}%`);
+  }
+
+  if (date) {
+    query += ' AND DATE(created_at) = ?';
+    params.push(date);
+  }
+
+  query += ' ORDER BY created_at DESC';
+
+  console.log('Executing search query:', query);
+  console.log('With params:', params);
+
+  connection.query(query, params, (err, results) => {
+    if (err) {
+      console.error('Search failed:', err);
+      return res.status(500).json({ success: false });
+    }
+    res.json({ success: true, orders: results });
+  });
+});
+
+app.get('/orders/:orderId', (req, res) => {
+  const { orderId } = req.params;
+  const query = 'SELECT * FROM orders WHERE order_id = ?';
+
+  connection.query(query, [orderId], (err, results) => {
+    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+    if (results.length === 0) return res.status(404).json({ success: false, message: 'Order not found' });
+
+    const order = results[0];
+    if (typeof order.cart === 'string') {
+      try {
+        order.cart = JSON.parse(order.cart);
+      } catch (err) {
+        console.error('Failed to parse order.cart:', err);
+        return res.status(500).json({ success: false, message: 'Invalid cart format' });
+      }
+    }
+    res.json({ success: true, order });
+
+  });
 });
 
 
 app.post('/orders/:orderId/cancel', (req, res) => {
-    const { orderId } = req.params;
-    const query = `UPDATE orders SET status = 'cancelled' WHERE order_id = ? AND status = 'saved'`;
+  const { orderId } = req.params;
+  const query = `UPDATE orders SET status = 'cancelled' WHERE order_id = ? AND status = 'saved'`;
 
-    connection.execute(query, [orderId], (err, result) => {
-        if (err) return res.status(500).json({ success: false });
-        res.json({ success: true, message: 'Order cancelled.' });
-    });
+  connection.execute(query, [orderId], (err, result) => {
+    if (err) return res.status(500).json({ success: false });
+    res.json({ success: true, message: 'Order cancelled.' });
+  });
 });
 
 app.post('/orders/:orderId/submit', (req, res) => {
-    const { orderId } = req.params;
-    const query = `UPDATE orders SET status = 'submitted' WHERE order_id = ? AND status = 'saved'`;
+  const { orderId } = req.params;
+  const query = `UPDATE orders SET status = 'submitted' WHERE order_id = ? AND status = 'saved'`;
 
-    connection.execute(query, [orderId], (err, result) => {
-        if (err) return res.status(500).json({ success: false });
-        res.json({ success: true, message: 'Order submitted successfully.' });
-    });
+  connection.execute(query, [orderId], (err, result) => {
+    if (err) return res.status(500).json({ success: false });
+    res.json({ success: true, message: 'Order submitted successfully.' });
+  });
 });
 
 app.get('/payment', (req, res) => {
-    const sql = 'SELECT * FROM payments ORDER BY created_at DESC LIMIT 1';
-    connection.query(sql, (err, results) => {
-        if (err) return res.status(500).json({ error: 'Database error' });
-        if (results.length > 0) {
-            res.json(results[0]);
-        } else {
-            res.json({});
-        }
-    });
+  const sql = 'SELECT * FROM payments ORDER BY created_at DESC LIMIT 1';
+  connection.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    if (results.length > 0) {
+      res.json(results[0]);
+    } else {
+      res.json({});
+    }
+  });
 });
 
 app.post('/payment', (req, res) => {
-    const {
-        cardholderName,
-        cardType,
-        cardNumber,
-        pin,
-        expiry,
-        address
-    } = req.body;
+  const {
+    cardholderName,
+    cardType,
+    cardNumber,
+    pin,
+    expiry,
+    address
+  } = req.body;
 
-    const deleteSql = 'DELETE FROM payments';
-    connection.query(deleteSql, (err) => {
-        if (err) {
-            console.error('Error clearing payments table:', err);
-            return res.status(500).json({ error: 'Failed to clear old payment information' });
-        }
+  const deleteSql = 'DELETE FROM payments';
+  connection.query(deleteSql, (err) => {
+    if (err) {
+      console.error('Error clearing payments table:', err);
+      return res.status(500).json({ error: 'Failed to clear old payment information' });
+    }
 
-        const insertSql = `
+    const insertSql = `
             INSERT INTO payments (cardholderName, cardType, cardNumber, pin, expiry, address)
             VALUES (?, ?, ?, ?, ?, ?)
         `;
 
-        connection.query(insertSql, [cardholderName, cardType, cardNumber, pin, expiry, address], (err, result) => {
-            if (err) {
-                console.error('Error inserting payment:', err);
-                return res.status(500).json({ error: 'Failed to save payment information' });
-            }
-            res.json({ message: 'Payment information saved successfully (previous entries cleared).' });
-        });
+    connection.query(insertSql, [cardholderName, cardType, cardNumber, pin, expiry, address], (err, result) => {
+      if (err) {
+        console.error('Error inserting payment:', err);
+        return res.status(500).json({ error: 'Failed to save payment information' });
+      }
+      res.json({ message: 'Payment information saved successfully (previous entries cleared).' });
     });
+  });
 });
 

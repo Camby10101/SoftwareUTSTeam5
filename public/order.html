@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="CSS/styles.css">
 
 </head>
+
 <body onload="displayWelcomeMessage()">
     <header class="header-container">
         <div class="header-img">
@@ -33,13 +35,19 @@
             </ul>
         </nav>
     </header>
-    
+
     <div>
         <h2>Orders</h2>
+        <div class="order-search">
+            <input type="text" id="search-order-id" placeholder="Search by Order ID">
+            <input type="date" id="search-date">
+            <button type="button" onclick="searchOrders()">Search</button>
+        </div>
+
         <h3>Saved Orders</h3>
         <h3>Order History</h3>
     </div>
-    
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -76,7 +84,7 @@
             <p>&copy; 2025 IoTBay. All rights reserved.</p>
         </div>
     </footer>
-   <script>
+    <script>
         function displayWelcomeMessage() {
             const username = sessionStorage.getItem('username');
             if (username) {
@@ -84,64 +92,104 @@
             }
         }
 
-async function loadOrders() {
-    const email = sessionStorage.getItem('email'); // or another way you're tracking the user
-    if (!email) return;
+        function displayOrders(orders) {
+            const savedOrders = orders.filter(o => o.status === 'saved');
+            const historyOrders = orders.filter(o => o.status !== 'saved');
 
-    const res = await fetch(`/orders?email=${encodeURIComponent(email)}`);
-    const data = await res.json();
-
-    console.log("Fetching orders for:", email);
-    console.log("Response data:", data);
-
-    if (!data.success) return;
-
-    const savedOrders = data.orders.filter(o => o.status === 'saved');
-    const historyOrders = data.orders.filter(o => o.status !== 'saved');
-
-    const container = document.createElement('div');
-
-    container.innerHTML += "<h3>Saved Orders</h3>";
-    savedOrders.forEach(o => {
-        container.innerHTML += `
+            const container = document.createElement('div');
+            container.innerHTML = "<h3>Saved Orders</h3>";
+            savedOrders.forEach(o => {
+                container.innerHTML += `
             <div>
                 <p>Order #${o.order_id} | $${o.total} | <strong>${o.status}</strong></p>
                 <button onclick="submitOrder('${o.order_id}')">Submit</button>
                 <button onclick="cancelOrder('${o.order_id}')">Cancel</button>
             </div>
         `;
-    });
+            });
 
-    container.innerHTML += "<h3>Order History</h3>";
-    historyOrders.forEach(o => {
-        container.innerHTML += `
+            container.innerHTML += "<h3>Order History</h3>";
+            historyOrders.forEach(o => {
+                container.innerHTML += `
             <div>
                 <p>Order #${o.order_id} | $${o.total} | <strong>${o.status}</strong> | ${new Date(o.created_at).toLocaleString()}</p>
             </div>
         `;
-    });
+            });
 
-    document.body.appendChild(container);
-}
+            document.body.querySelectorAll("div")[1].replaceWith(container); 
+        }
 
-async function submitOrder(orderId) {
-    await fetch(`/orders/${orderId}/submit`, { method: 'POST' });
-    location.reload();
-}
+        async function loadOrders() {
+            const email = sessionStorage.getItem('email');
+            if (!email) return;
 
-async function cancelOrder(orderId) {
-    await fetch(`/orders/${orderId}/cancel`, { method: 'POST' });
-    location.reload();
-}
+            const res = await fetch(`/orders?email=${encodeURIComponent(email)}`);
+            const data = await res.json();
 
-window.onload = function () {
-    displayWelcomeMessage();
-    loadOrders();
-}
+            if (!data.success) return;
+            displayOrders(data.orders);
+        }
+
+        async function searchOrders() {
+            console.log("🔎 searchOrders() called");
+
+            const email = sessionStorage.getItem('email');
+            const orderId = document.getElementById('search-order-id').value;
+            const date = document.getElementById('search-date').value;
+
+            const params = new URLSearchParams({ email });
+            if (orderId) params.append('orderId', orderId);
+            if (date) params.append('date', date);
+
+            console.log("🔍 Searching with params:", params.toString());
+
+            const res = await fetch(`/orders/search?${params.toString()}`);
+            const data = await res.json();
+
+            console.log("🔍 Search response:", data);
+
+            if (!data.success) {
+                alert('Failed to search orders.');
+                return;
+            }
+
+            displayOrders(data.orders);
+        }
+
+
+        async function submitOrder(orderId) {
+            const res = await fetch(`/orders/${orderId}`);
+            const data = await res.json();
+
+            if (!data.success || !data.order) {
+                alert("Failed to load saved order.");
+                return;
+            }
+
+            // Save cart data into localStorage
+            localStorage.setItem('cart', JSON.stringify(data.order.cart));
+            localStorage.setItem('restoredOrderId', orderId); 
+            localStorage.setItem('orderTotal', data.order.total || 0);
+
+            // Redirect to cart.html for review and continuation
+            window.location.href = 'cart.html';
+        }
+
+        async function cancelOrder(orderId) {
+            await fetch(`/orders/${orderId}/cancel`, { method: 'POST' });
+            location.reload();
+        }
+
+        window.onload = function () {
+            displayWelcomeMessage();
+            loadOrders();
+        }
 
 
 
 
     </script>
 </body>
+
 </html>

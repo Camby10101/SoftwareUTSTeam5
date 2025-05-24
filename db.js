@@ -4,10 +4,10 @@ const mysql = require('mysql2');
 
 // Create a connection to the database
 const connection = mysql.createConnection({
-  host: 'localhost',   
-  user: 'root',  
+  host: 'localhost',
+  user: 'root',
   password: '',
-  database: 'iot' 
+  database: 'iot'
 });
 
 // Connect to the database
@@ -22,7 +22,7 @@ connection.connect((err) => {
 // Create 'iot' database if it doesn't exist
 connection.query('CREATE DATABASE IF NOT EXISTS iot', (err) => {
   if (err) throw err;
-  console.log('✅ Database "iot" ready');
+  console.log('Database "iot" ready');
 
   // Switch to 'iot' database
   connection.changeUser({ database: 'iot' }, (err) => {
@@ -41,34 +41,34 @@ connection.query('CREATE DATABASE IF NOT EXISTS iot', (err) => {
     password VARCHAR(100)
   )
 `;
-connection.query(createCustomersTable, (err) => {
-  if (err) throw err;
-  console.log('✅ Customers table ready');
-});
+    connection.query(createCustomersTable, (err) => {
+      if (err) throw err;
+      console.log('Customers table ready');
+    });
 
-connection.query('SELECT COUNT(*) AS count FROM customers', (err, results) => {
-  if (err) throw err;
+    connection.query('SELECT COUNT(*) AS count FROM customers', (err, results) => {
+      if (err) throw err;
 
-  const count = results[0].count;
-  if (count === 0) {
-    const insertUsers = `
+      const count = results[0].count;
+      if (count === 0) {
+        const insertUsers = `
       INSERT INTO customers (fullname, email, phone, password)
       VALUES 
         ('Alice Johnson', 'alice@example.com', '1234567890', 'password123'),
         ('Bob Smith', 'bob@example.com', '0987654321', 'mypassword'),
         ('Charlie Brown', 'charlie@example.com', '5551234567', 'charlie123')
     `;
-    connection.query(insertUsers, (err) => {
-      if (err) throw err;
-      console.log('✅ Sample customers inserted');
+        connection.query(insertUsers, (err) => {
+          if (err) throw err;
+          console.log('Sample customers inserted');
+        });
+      } else {
+        console.log(`${count} customers already exist.`);
+      }
     });
-  } else {
-    console.log(`${count} customers already exist.`);
-  }
-});
 
 
-const createAccessLogTable = `
+    const createAccessLogTable = `
   CREATE TABLE IF NOT EXISTS accesslog (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
@@ -77,10 +77,10 @@ const createAccessLogTable = `
     FOREIGN KEY (user_id) REFERENCES customers(user_id)
   )
 `;
-connection.query(createAccessLogTable, (err) => {
-  if (err) throw err;
-  console.log('✅ AccessLog table ready');
-});
+    connection.query(createAccessLogTable, (err) => {
+      if (err) throw err;
+      console.log('AccessLog table ready');
+    });
 
 
 
@@ -97,7 +97,7 @@ connection.query(createAccessLogTable, (err) => {
     `;
     connection.query(createTableQuery, (err) => {
       if (err) throw err;
-      console.log('✅ Products table ready');
+      console.log('Products table ready');
 
 
       // Check if products exist
@@ -118,7 +118,7 @@ connection.query(createAccessLogTable, (err) => {
           `;
           connection.query(insertProducts, (err) => {
             if (err) throw err;
-            console.log('✅ Sample products inserted');
+            console.log('Sample products inserted');
           });
         } else {
           console.log(`${count} product(s) already exist. No need to insert sample data.`);
@@ -138,10 +138,10 @@ connection.query(createAccessLogTable, (err) => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
-    connection.query(createPaymentsTable, (err) => {
-      if (err) throw err;
-      console.log('✅ Payments table ready');
-    });
+  connection.query(createPaymentsTable, (err) => {
+    if (err) throw err;
+    console.log('Payments table ready');
+  });
   const createOrdersTable = `
     CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -155,7 +155,7 @@ connection.query(createAccessLogTable, (err) => {
   `;
   connection.query(createOrdersTable, (err) => {
     if (err) throw err;
-    console.log('✅ Orders table ready');
+    console.log('Orders table ready');
   });
 });
 

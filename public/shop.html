@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="CSS/styles.css">
 
 </head>
+
 <body onload="displayWelcomeMessage(); loadProducts()">
     <header class="header-container">
         <div class="header-img">
@@ -33,9 +35,9 @@
             </ul>
         </nav>
     </header>
-    
+
     <div id="product-list" class="product-container">
-        
+
     </div>
 
 
@@ -75,26 +77,28 @@
             <p>&copy; 2025 IoTBay. All rights reserved.</p>
         </div>
     </footer>
-   <script>
+    <script>
+        let allProducts = [];
         function displayWelcomeMessage() {
             const username = sessionStorage.getItem('username');
             if (username) {
                 document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
             }
         }
-async function loadProducts() {
-    try {
-        const response = await fetch('/getProducts');
-        const data = await response.json(); 
+        async function loadProducts() {
+            try {
+                const response = await fetch('/getProducts');
+                const data = await response.json();
 
-        if (data.success && Array.isArray(data.products)) {
-            const products = data.products;
-            const container = document.getElementById('product-list');
+                if (data.success && Array.isArray(data.products)) {
+                    const products = data.products; 
+                    allProducts = products;
+                    const container = document.getElementById('product-list');
 
-            products.forEach(product => {
-                const div = document.createElement('div');
-                div.className = 'product-item';
-                div.innerHTML = `
+                    products.forEach(product => {
+                        const div = document.createElement('div');
+                        div.className = 'product-item';
+                        div.innerHTML = `
                     <img src="${product.image}" alt="${product.name}" width="150">
                     <h3>${product.name}</h3>
                     <p>${product.description}</p>
@@ -103,52 +107,58 @@ async function loadProducts() {
                     <input type="number" id="qty-${product.id}" min="1" max="${product.stock}" value="1" />
                     <button onclick="addToCart(${product.id}, ${product.stock})">Add to Cart</button>
                 `;
-                container.appendChild(div);
-            });
-        } else {
-            console.error('No products found or server error');
+                        container.appendChild(div);
+                    });
+                } else {
+                    console.error('No products found or server error');
+                }
+            } catch (err) {
+                console.error('Failed to load products', err);
+            }
         }
-    } catch (err) {
-        console.error('Failed to load products', err);
-    }
-}
 
-function addToCart(productId, stock) {
-  const qtyInput = document.getElementById(`qty-${productId}`);
-  const quantity = parseInt(qtyInput.value);
+        function addToCart(productId, stock) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) {
+                alert("Product not found.");
+                return;
+            }
 
-  if (isNaN(quantity) || quantity < 1) {
-    alert("Please enter a valid quantity.");
-    return;
-  }
+            const qtyInput = document.getElementById(`qty-${productId}`);
+            const quantity = parseInt(qtyInput.value);
 
-  if (quantity > stock) {
-    alert("You can't add more than what's in stock.");
-    return;
-  }
+            if (isNaN(quantity) || quantity < 1) {
+                alert("Please enter a valid quantity.");
+                return;
+            }
 
-  // Get current cart from localStorage
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (quantity > stock) {
+                alert("You can't add more than what's in stock.");
+                return;
+            }
+            // Get current cart from localStorage
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-  // Check if product already exists in cart
-  const existing = cart.find(item => item.productId === productId);
+            // Check if product already exists in cart
+            const existing = cart.find(item => item.productId === productId);
 
-  if (existing) {
-    // Check if new quantity would exceed stock
-    if (existing.quantity + quantity > stock) {
-      alert(`Only ${stock - existing.quantity} more can be added.`);
-      return;
-    }
-    existing.quantity += quantity;
-  } else {
-    cart.push({ productId, quantity });
-  }
+            if (existing) {
+                // Check if new quantity would exceed stock
+                if (existing.quantity + quantity > stock) {
+                    alert(`Only ${stock - existing.quantity} more can be added.`);
+                    return;
+                }
+                existing.quantity += quantity;
+            } else {
+                cart.push({ productId, quantity, price: parseFloat(product.price) });
+            }
 
-  localStorage.setItem('cart', JSON.stringify(cart));
-  alert("Item added to cart!");
-}
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert("Item added to cart!");
+        }
 
 
     </script>
 </body>
+
 </html>

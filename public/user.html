@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoTBay - Home</title>
     <link rel="stylesheet" type="text/css" href="CSS/styles.css">
-    
+
 </head>
+
 <body>
     <header class="header-container">
         <div class="header-img">
@@ -33,7 +35,7 @@
             </ul>
         </nav>
     </header>
-    
+
     <form class="user-info-form" method="POST" action="/payment">
         <section class="payment-info">
             <h2>Payment Information</h2>
@@ -42,12 +44,12 @@
 
             <div>
                 <label for="cardType">Select Card Type:</label>
-                    <select id="cardType" name="cardType" class="card-dropdown" required>
+                <select id="cardType" name="cardType" class="card-dropdown" required>
                     <option value="" disabled selected>Select your card</option>
                     <option value="visa">Visa</option>
                     <option value="mastercard">Mastercard</option>
                     <option value="amex">American Express</option>
-                    </select>
+                </select>
             </div>
 
             <label for="cardNumber">Card Number:</label>
@@ -67,13 +69,21 @@
             </div>
         </section>
     </form>
-        
-    <section class="order-history">
-        <h2>Order History</h2>
-        <ul id="order-list"></ul>
+
+    <section class="order-section">
+        <h2>Orders</h2>
+
+        <div class="order-search">
+            <input type="text" id="search-order-id" placeholder="Search by Order ID (no #)">
+            <input type="date" id="search-date">
+            <button type="button" class="search-button" onclick="searchOrders()">Search</button>
+        </div>
+
+        <div id="orders-container">
+        </div>
     </section>
 
-    
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -110,120 +120,237 @@
             <p>&copy; 2025 IoTBay. All rights reserved.</p>
         </div>
     </footer>
-   
-   <script>
 
-    function convertDateFormat(mmYYYY) { //Goes to American (test)
-        if (!mmYYYY) return '';
-        const parts = mmYYYY.split('-');
-        if (parts.length !== 2) return '';
+    <script>
 
-        const [month, year] = parts;
-        return `${year}-${month.padStart(2, '0')}`;
-    }
+        function convertDateFormat(mmYYYY) { //Goes to American (test)
+            if (!mmYYYY) return '';
+            const parts = mmYYYY.split('-');
+            if (parts.length !== 2) return '';
 
-    async function loadOrders() {
-        try {
-            const res = await fetch('/orders');
+            const [month, year] = parts;
+            return `${year}-${month.padStart(2, '0')}`;
+        }
+
+        let currentPageSaved = 1;
+        let currentPageHistory = 1;
+        const ordersPerPage = 3;
+
+        function paginateOrders(orders, page) {
+            const start = (page - 1) * ordersPerPage;
+            return orders.slice(start, start + ordersPerPage);
+        }
+
+        function createPaginationControls(totalOrders, currentPage, onPageChange) {
+            const totalPages = Math.ceil(totalOrders / ordersPerPage);
+            let controls = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                controls += `<button onclick="${onPageChange}(${i})" ${i === currentPage ? 'disabled' : ''}>${i}</button>`;
+            }
+
+            return controls;
+        }
+
+
+        function displayOrders(orders) {
+            const savedOrders = orders.filter(o => o.status === 'saved');
+            const historyOrders = orders.filter(o => o.status !== 'saved');
+
+            const container = document.getElementById("orders-container");
+            container.innerHTML = '';
+
+            // Saved Orders
+            container.innerHTML += `<h3>Saved Orders</h3>`;
+            if (savedOrders.length === 0) {
+                container.innerHTML += `<p>No saved orders to show.</p>`;
+            } else {
+                const paginatedSaved = paginateOrders(savedOrders, currentPageSaved);
+                paginatedSaved.forEach(o => {
+                    container.innerHTML += `
+                <div>
+                    <p>Order #${o.order_id} | $${o.total} | <strong>${o.status}</strong></p>
+                    <button class="order-submit-btn" onclick="submitOrder('${o.order_id}')">Submit</button>
+                    <button class="order-cancel-btn" onclick="cancelOrder('${o.order_id}')">Cancel</button>
+                </div>
+            `;
+                });
+
+                container.innerHTML += `
+            <div class="pagination">
+                ${createPaginationControls(savedOrders.length, currentPageSaved, 'changeSavedPage')}
+            </div>
+        `;
+            }
+
+            // History Orders
+            container.innerHTML += `<h3>Order History</h3>`;
+            if (historyOrders.length === 0) {
+                container.innerHTML += `<p>No order history to show.</p>`;
+            } else {
+                const paginatedHistory = paginateOrders(historyOrders, currentPageHistory);
+                paginatedHistory.forEach(o => {
+                    container.innerHTML += `
+                <div>
+                    <p>Order #${o.order_id} | $${o.total} | <strong>${o.status}</strong> | ${new Date(o.created_at).toLocaleString()}</p>
+                </div>
+            `;
+                });
+
+                container.innerHTML += `
+            <div class="pagination">
+                ${createPaginationControls(historyOrders.length, currentPageHistory, 'changeHistoryPage')}
+            </div>
+        `;
+            }
+        }
+
+        function changeSavedPage(page) {
+            currentPageSaved = page;
+            loadOrders(); // Or re-call displayOrders with cached data if stored
+        }
+
+        function changeHistoryPage(page) {
+            currentPageHistory = page;
+            loadOrders(); // Or re-call displayOrders with cached data if stored
+        }
+
+        async function loadOrders() {
+            const email = sessionStorage.getItem('email');
+            const container = document.getElementById("orders-container");
+
+            if (!email) {
+                container.innerHTML = `
+            <p>You must be logged in to view saved orders and order history.</p>
+        `;
+                return;
+            }
+
+            try {
+                const res = await fetch(`/orders?email=${encodeURIComponent(email)}`);
+                const data = await res.json();
+
+                if (!data.success) {
+                    container.innerHTML = `
+                <p>Failed to load your orders. Please try again later.</p>
+            `;
+                    return;
+                }
+
+                displayOrders(data.orders);
+            } catch (error) {
+                console.error("Error loading orders:", error);
+                container.innerHTML = `
+            <p>An unexpected error occurred. Please try again later.</p>
+        `;
+            }
+        }
+
+        async function searchOrders() {
+            const email = sessionStorage.getItem('email');
+            const orderId = document.getElementById('search-order-id').value;
+            const date = document.getElementById('search-date').value;
+
+            const params = new URLSearchParams({ email });
+            if (orderId) params.append('orderId', orderId);
+            if (date) params.append('date', date);
+
+            const res = await fetch(`/orders/search?${params.toString()}`);
             const data = await res.json();
 
             if (!data.success) {
-                document.getElementById('order-list').innerHTML = '<li>Unable to load orders.</li>';
+                alert('Failed to search orders.');
                 return;
             }
 
-            const orders = data.orders;
-            const list = document.getElementById('order-list');
-            list.innerHTML = '';
-
-            if (orders.length === 0) {
-                list.innerHTML = '<li>No orders found.</li>';
-                return;
-            }
-
-            orders.forEach(order => {
-                const item = document.createElement('li');
-                item.innerHTML = `
-                    <strong>Order ID:</strong> ${order.order_id} <br>
-                    <strong>Name:</strong> ${order.name} <br>
-                    <strong>Total:</strong> $${parseFloat(order.total).toFixed(2)} <br>
-                    <strong>Date:</strong> ${new Date(order.timestamp).toLocaleString()} <br>
-                    <strong>Address:</strong> ${order.address} <br>
-                    <hr>
-                    `;
-                list.appendChild(item);
-            });
-        } catch (error) {
-            document.getElementById('order-list').innerHTML = '<li>Unable to load orders.</li>';
-            console.error('Error loading orders:', error);
+            displayOrders(data.orders);
         }
-    }
 
-    loadOrders();
-
-    async function loadLatestPayment() {
-        try {
-            const res = await fetch('/payment');
+        async function submitOrder(orderId) {
+            const res = await fetch(`/orders/${orderId}`);
             const data = await res.json();
 
-            if (data.success && data.payment) {
-                const p = data.payment;
-                document.getElementById('cardholderName').value = p.cardholderName || '';
-                document.getElementById('cardType').value = p.cardType || '';
-                document.getElementById('cardNumber').value = p.cardNumber || '';
-                document.getElementById('pin').value = p.pin || '';
-                document.getElementById('expiry').value = convertDateFormat(p.expiry);
-                document.getElementById('address').value = p.address || '';
+            if (!data.success || !data.order) {
+                alert("Failed to load saved order.");
+                return;
             }
-        } catch (error) {
-            console.error('Error loading payment info:', error);
+
+            localStorage.setItem('cart', JSON.stringify(data.order.cart));
+            localStorage.setItem('restoredOrderId', orderId);
+            localStorage.setItem('orderTotal', data.order.total || 0);
+
+            window.location.href = 'cart.html';
         }
-    }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        // Load existing payment info
-        fetch('/payment')
-            .then(res => res.json())
-            .then(data => {
-                if (data && Object.keys(data).length > 0) {
-                    document.getElementById('cardholderName').value = data.cardholderName || '';
-                    document.getElementById('cardType').value = data.cardType || '';
-                    document.getElementById('cardNumber').value = data.cardNumber || '';
-                    document.getElementById('pin').value = data.pin || '';
-                    document.getElementById('expiry').value = data.expiry || '';
-                    document.getElementById('address').value = data.address || '';
+        async function cancelOrder(orderId) {
+            await fetch(`/orders/${orderId}/cancel`, { method: 'POST' });
+            loadOrders();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrders();
+            loadLatestPayment();
+        });
+
+        async function loadLatestPayment() {
+            try {
+                const res = await fetch('/payment');
+                const data = await res.json();
+
+                if (data.success && data.payment) {
+                    const p = data.payment;
+                    document.getElementById('cardholderName').value = p.cardholderName || '';
+                    document.getElementById('cardType').value = p.cardType || '';
+                    document.getElementById('cardNumber').value = p.cardNumber || '';
+                    document.getElementById('pin').value = p.pin || '';
+                    document.getElementById('expiry').value = convertDateFormat(p.expiry);
+                    document.getElementById('address').value = p.address || '';
                 }
-            });
+            } catch (error) {
+                console.error('Error loading payment info:', error);
+            }
+        }
 
-        // Use POST when clicking the "Save Changes" button
-        const form = document.querySelector('.user-info-form');
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
+        document.addEventListener("DOMContentLoaded", () => {
+            // Load existing payment info
+            fetch('/payment')
+                .then(res => res.json())
+                .then(data => {
+                    if (data && Object.keys(data).length > 0) {
+                        document.getElementById('cardholderName').value = data.cardholderName || '';
+                        document.getElementById('cardType').value = data.cardType || '';
+                        document.getElementById('cardNumber').value = data.cardNumber || '';
+                        document.getElementById('pin').value = data.pin || '';
+                        document.getElementById('expiry').value = data.expiry || '';
+                        document.getElementById('address').value = data.address || '';
+                    }
+                });
 
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
+            // Use POST when clicking the "Save Changes" button
+            const form = document.querySelector('.user-info-form');
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
 
-            fetch('/payment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(res => res.json())
-            .then(response => {
-                alert(response.message);
-            })
-            .catch(err => {
-                console.error('Failed to save payment info:', err);
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                fetch('/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(res => res.json())
+                    .then(response => {
+                        alert(response.message);
+                    })
+                    .catch(err => {
+                        console.error('Failed to save payment info:', err);
+                    });
             });
         });
-    });
     </script>
 </body>
+
 </html>
-
-
-
-
-
