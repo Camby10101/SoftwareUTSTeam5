@@ -38,7 +38,7 @@
         <br>
         <p>Total: $<span id="total-price">{{totalPrice}}</span></p>
         <br>
-        <form id="payment-form" action="/submit-payment" method="POST">
+        <form id="payment-form" action="/payment" method="POST">
             <div>
                 <label for="name">Full Name:</label>
                 <input type="text" id="name" name="name" class="fill-space" placeholder="Enter your Full Name" required>
@@ -138,7 +138,7 @@
 
                 document.getElementById('name').value = data.cardholderName || '';
                 document.getElementById('cardType').value = data.cardType || '';
-                document.getElementById('creditCard').value = '**** **** **** ' + data.cardNumber; // Masked
+                document.getElementById('creditCard').value = data.cardNumber || '';
                 document.getElementById('pin').value = data.pin || '';
                 document.getElementById('expiry').value = data.expiry || '';
                 document.getElementById('address').value = data.address || '';

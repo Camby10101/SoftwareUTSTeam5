@@ -34,7 +34,7 @@
         </nav>
     </header>
     
-    <form class="user-info-form" method="POST" action="/save-payment">
+    <form class="user-info-form" method="POST" action="/payment">
         <section class="payment-info">
             <h2>Payment Information</h2>
             <label for="cardholderName">Cardholder Name:</label>
@@ -66,15 +66,13 @@
                 <button type="submit" class="btn">Save Changes</button>
             </div>
         </section>
-
-        <section class="order-history">
-            <h2>Order History</h2>
-            <ul id="order-list"></ul>
-
-
-        </section>
-
     </form>
+        
+    <section class="order-history">
+        <h2>Order History</h2>
+        <ul id="order-list"></ul>
+    </section>
+
     
     <footer>
         <div class="footer-content">
@@ -165,13 +163,14 @@
 
     async function loadLatestPayment() {
         try {
-            const res = await fetch('/latest-payment');
+            const res = await fetch('/payment');
             const data = await res.json();
 
             if (data.success && data.payment) {
                 const p = data.payment;
-                document.getElementById('cardholderName').value = p.cardholder_name || p.cardholderName || '';
-                document.getElementById('cardNumber').value = p.card_number || '';
+                document.getElementById('cardholderName').value = p.cardholderName || '';
+                document.getElementById('cardType').value = p.cardType || '';
+                document.getElementById('cardNumber').value = p.cardNumber || '';
                 document.getElementById('pin').value = p.pin || '';
                 document.getElementById('expiry').value = convertDateFormat(p.expiry);
                 document.getElementById('address').value = p.address || '';
@@ -181,42 +180,45 @@
         }
     }
 
-    loadLatestPayment();
+    document.addEventListener("DOMContentLoaded", () => {
+        // Load existing payment info
+        fetch('/payment')
+            .then(res => res.json())
+            .then(data => {
+                if (data && Object.keys(data).length > 0) {
+                    document.getElementById('cardholderName').value = data.cardholderName || '';
+                    document.getElementById('cardType').value = data.cardType || '';
+                    document.getElementById('cardNumber').value = data.cardNumber || '';
+                    document.getElementById('pin').value = data.pin || '';
+                    document.getElementById('expiry').value = data.expiry || '';
+                    document.getElementById('address').value = data.address || '';
+                }
+            });
 
-    async function loadPaymentHistory() {
-        try {
-        const response = await fetch('/payment');
-        if (!response.ok) throw new Error('Failed to fetch payment history');
+        // Use POST when clicking the "Save Changes" button
+        const form = document.querySelector('.user-info-form');
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
 
-        const payments = await response.json();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
 
-        const list = document.getElementById('order-list');
-        list.innerHTML = '';
-
-        if (payments.length === 0) {
-            list.innerHTML = '<li>No payment records found.</li>';
-            return;
-        }
-
-        payments.forEach(payment => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-            <strong>${payment.cardholderName}</strong> (${payment.cardType})<br>
-            Card Ending: ${payment.cardNumber}<br>
-            Expiry: ${new Date(payment.expiry).toLocaleDateString(undefined, { year: 'numeric', month: 'long' })}<br>
-            Address: ${payment.address}<br>
-            Saved: ${new Date(payment.created_at).toLocaleString()}
-            `;
-            list.appendChild(li);
+            fetch('/payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(response => {
+                alert(response.message);
+            })
+            .catch(err => {
+                console.error('Failed to save payment info:', err);
+            });
         });
-        } catch (err) {
-        console.error(err);
-        document.getElementById('order-list').innerHTML = '<li>Error loading payment history.</li>';
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', loadPaymentHistory);
-    
+    });
     </script>
 </body>
 </html>

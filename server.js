@@ -378,60 +378,47 @@ app.post('/orders/:orderId/submit', (req, res) => {
     });
 });
 
-
-
-app.post('/save-payment', (req, res) => {
-  const { cardholderName, cardType, cardNumber, pin, expiry, address } = req.body;
-
-  const insertPayment = `
-    INSERT INTO payments (cardholderName, cardType, cardNumber, pin, expiry, address)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `;
-
-  connection.query(insertPayment, [cardholderName, cardType, cardNumber, pin, expiry + '-01', address], (err, results) => {
-    if (err) {
-      console.error('Error saving payment:', err);
-      return res.status(500).send('Error saving payment');
-    }
-  });
-  console.log('✅ Payment saved:', { cardholderName, cardType, cardNumber, pin, expiry, address });
-});
-
-app.post('/submit-payment', (req, res) => {
-  const { name, cardType, creditCard, pin, expiry, address } = req.body;
-
-  const maskedCard = creditCard.slice(-4); // Only store last 4 digits
-
-  const query = `
-    REPLACE INTO payments (id, cardholderName, cardType, cardNumber, pin, expiry, address)
-    VALUES (1, ?, ?, ?, ?, ?, ?)
-  `;
-
-  connection.query(query, [name, cardType, maskedCard, pin, expiry, address], (err) => {
-    if (err) {
-      console.error('Failed to save payment:', err);
-      return res.status(500).send('Internal server error');
-    }
-    res.redirect('/confirmation.html'); // Or show a thank-you message
-  });
-});
-
-
 app.get('/payment', (req, res) => {
-  const query = 'SELECT id, cardholderName, cardType, cardNumber, expiry, address, created_at FROM payments ORDER BY created_at DESC';
-
-  connection.query(query, (err, results) => {
-    if (err) {
-      console.error('Error fetching payments:', err);
-      return res.status(500).send('Error fetching payments');
-    }
-
-    // Optional: Mask card numbers
-    const maskedResults = results.map(payment => ({
-      ...payment,
-      cardNumber: payment.cardNumber.replace(/\d{12}(\d{4})/, '**** **** **** $1') // mask first 12 digits
-    }));
-
-    res.json(maskedResults); // return JSON to front-end
-  });
+    const sql = 'SELECT * FROM payments ORDER BY created_at DESC LIMIT 1';
+    connection.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: 'Database error' });
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.json({});
+        }
+    });
 });
+
+app.post('/payment', (req, res) => {
+    const {
+        cardholderName,
+        cardType,
+        cardNumber,
+        pin,
+        expiry,
+        address
+    } = req.body;
+
+    const deleteSql = 'DELETE FROM payments';
+    connection.query(deleteSql, (err) => {
+        if (err) {
+            console.error('Error clearing payments table:', err);
+            return res.status(500).json({ error: 'Failed to clear old payment information' });
+        }
+
+        const insertSql = `
+            INSERT INTO payments (cardholderName, cardType, cardNumber, pin, expiry, address)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `;
+
+        connection.query(insertSql, [cardholderName, cardType, cardNumber, pin, expiry, address], (err, result) => {
+            if (err) {
+                console.error('Error inserting payment:', err);
+                return res.status(500).json({ error: 'Failed to save payment information' });
+            }
+            res.json({ message: 'Payment information saved successfully (previous entries cleared).' });
+        });
+    });
+});
+
