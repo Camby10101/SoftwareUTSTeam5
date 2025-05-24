@@ -35,8 +35,8 @@
     </header>
     
         <div class="cart-container">
-        <h2>Your Cart</h2>
-        <div id="cart-items"></div>
+            <h2>Your Cart</h2>
+            <div id="cart-items"></div>
         <!--<div class="cart-container">
             <div class="cart-item">
                 <img src="images/IotEmbeddedSystem.webp">
@@ -68,10 +68,10 @@
         <p>Subtotal: $</p>
         <br>
         <div> -->
-        <div class="cart-options">
-            <a href="shop.html"><button class="item-btn">Continue Shopping</button></a>
-            <button class="item-btn" id="checkout-btn">Checkout</button></a>
-        </div>
+            <div class="cart-options">
+                <a href="shop.html"><button class="item-btn">Continue Shopping</button></a>
+                <a href="payment.html"><button class="item-btn">Checkout</button></a>
+            </div>
         </div>
 
         <!-- </div>
@@ -125,7 +125,7 @@
 async function loadCart() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const cartContainer = document.getElementById('cart-items');
-    const checkoutBtn = document.getElementById('checkout-btn'); 
+    const checkoutBtn = document.getElementById('checkout-btn');
 
     if (cart.length === 0) {
         cartContainer.innerHTML = "<p>Your cart is empty.</p>";
@@ -169,7 +169,7 @@ async function loadCart() {
     });
 
     cartContainer.innerHTML += `<h3>Total: $<span id="total">${total.toFixed(2)}</span></h3>`;
-    localStorage.setItem('orderTotal', total.toFixed(2));
+    localStorage.setItem('orderTotal', cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2));
 
     const invalid = cart.some(item => {
     const product = allProducts.find(p => p.id === item.productId);
@@ -223,6 +223,7 @@ function removeFromCart(index) {
     cart.splice(index, 1);
     localStorage.setItem('cart', JSON.stringify(cart));
     loadCart(); // Refresh cart view
+    localStorage.setItem('orderTotal', cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2));
 }
 
 window.onload = loadCart;
@@ -245,6 +246,7 @@ document.getElementById('checkout-btn').addEventListener('click', async function
     }
 
     // ✅ All quantities are valid — proceed to checkout
+    localStorage.setItem('orderTotal', cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2));
     window.location.href = 'payment.html';
 });
 

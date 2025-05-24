@@ -17,6 +17,7 @@ app.use(bodyParser.json());
 const connection = require('./db');
 const db = require('./db');
 
+
 connection.connect(err => {
   if (err) {
     console.error('Error connecting:', err.stack);

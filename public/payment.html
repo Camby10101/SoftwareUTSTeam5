@@ -36,7 +36,7 @@
     <div class="payment-container">
         <h2>Checkout</h2>
         <br>
-        <p>Total: $<span id="total-price">{{totalPrice}}</span></p>
+        <p>Total: $<span id="total-price">0.00</span></p>
         <br>
         <form id="payment-form" action="/submit-payment" method="POST">
             <div>
@@ -80,7 +80,7 @@
             <br>
             <div class="button-group">
                 <a href="cart.html"><button type="button" class="btn">Back to Cart</button></a>
-                <button type="submit" class="btn">SubmitPayment</button>
+                <button type="submit" class="btn">Submit Payment</button>
             </div>
         </form>
 
@@ -175,13 +175,13 @@
     const email = sessionStorage.getItem('email') || 'guest@example.com';
     const orderId = `ORD-${Date.now()}`;
 
-console.log('Submitting order with:', {
-  orderId,
-  email,
-  status: 'submitted',
-  cartData,
-  total
-});
+    console.log('Submitting order with:', {
+    orderId,
+    email,
+    status: 'submitted',
+    cartData,
+    total
+    });
 
     // Save the order in the database
     const orderResponse = await fetch('/orders', {
@@ -196,6 +196,19 @@ console.log('Submitting order with:', {
         })
     });
 
+    await fetch('/payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            cardholderName: document.getElementById('name').value,
+            cardType: document.getElementById('cardType').value,
+            cardNumber: fullCard,
+            pin: document.getElementById('pin').value,
+            expiry: document.getElementById('expiry').value,
+            address: document.getElementById('address').value
+        })
+    });
+
     if (!orderResponse.ok) {
         alert('Failed to save order.');
         return;
@@ -207,32 +220,8 @@ console.log('Submitting order with:', {
 
     // Finally, redirect to confirmation page
     window.location.href = 'confirmation.html';
-});
 
-            // document.getElementById('payment-form').addEventListener('submit', function (e) {
-            // const fullCard = document.getElementById('creditCard').value.trim();
-
-            // if (!/^\d{4,}$/.test(fullCard)) {
-            //     alert("Please enter a valid card number");
-            //     e.preventDefault();
-            //     return;
-            // }
-
-            // if (fullCard.includes('*')) {
-            //     alert("Please re-enter your full card number before submitting.");
-            //     e.preventDefault();
-            //     return;
-            // }
-
-            // const cart = [
-            //     { productId: 1, name: "Smart Sensor", quantity: 2, price: 29.99 },
-            //     { productId: 2, name: "IoT Gateway", quantity: 1, price: 99.99 }
-            // ];
-            // const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-            // document.getElementById('cartData').value = JSON.stringify(cart);
-            // document.getElementById('total').value = total.toFixed(2);
-            // });
+    });
 
         window.onload = updateTotalPrice;
 
@@ -253,6 +242,53 @@ console.log('Submitting order with:', {
                 `;
                 container.appendChild(div);
             });
+            }
+        });
+
+        document.getElementById('payment-form').addEventListener('submit', async function (e) {
+            e.preventDefault(); // prevent the form from submitting normally
+
+            const fullCard = document.getElementById('creditCard').value.trim();
+
+            if (!/^\d{4,}$/.test(fullCard)) {
+                alert("Please enter a valid card number");
+                return;
+            }
+
+            if (fullCard.includes('*')) {
+                alert("Please re-enter your full card number before submitting.");
+                return;
+            }
+
+            // Prepare data
+            const paymentData = {
+                cardholderName: document.getElementById('name').value,
+                cardType: document.getElementById('cardType').value,
+                cardNumber: fullCard,
+                pin: document.getElementById('pin').value,
+                expiry: document.getElementById('expiry').value,
+                address: document.getElementById('address').value
+            };
+
+            // Send to backend
+            try {
+                const response = await fetch('/payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(paymentData)
+                });
+
+                if (!response.ok) {
+                    alert('Failed to save payment information.');
+                    return;
+                }
+
+                alert('Payment information saved successfully!');
+                // Optionally clear form or redirect
+                window.location.href = 'confirmation.html';
+            } catch (err) {
+                console.error('Error submitting payment:', err);
+                alert('Error occurred while submitting payment.');
             }
         });
 
