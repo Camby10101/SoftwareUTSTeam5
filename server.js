@@ -464,6 +464,15 @@ app.post('/payment', (req, res) => {
     address
   } = req.body;
 
+  console.log('Submitting payment info:', {
+    cardholderName,
+    cardType,
+    cardNumber,
+    pin,
+    expiry,
+    address
+  });
+
   const deleteSql = 'DELETE FROM payments';
   connection.query(deleteSql, (err) => {
     if (err) {
