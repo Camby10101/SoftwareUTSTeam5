@@ -464,34 +464,38 @@ app.post('/payment', (req, res) => {
     address
   } = req.body;
 
-  console.log('Submitting payment info:', {
-    cardholderName,
-    cardType,
-    cardNumber,
-    pin,
-    expiry,
-    address
-  });
+  // Append -01 to expiry month to form a full DATE
+  const fullExpiry = expiry ? `${expiry}-01` : null;
 
-  const deleteSql = 'DELETE FROM payments';
-  connection.query(deleteSql, (err) => {
+  const insertSql = `
+    INSERT INTO payments (cardholderName, cardType, cardNumber, pin, expiry, address)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  connection.query(insertSql, [cardholderName, cardType, cardNumber, pin, fullExpiry, address], (err, result) => {
     if (err) {
-      console.error('Error clearing payments table:', err);
-      return res.status(500).json({ error: 'Failed to clear old payment information' });
+      console.error('Error inserting payment:', err);
+      return res.status(500).send('Failed to save payment information');
     }
 
-    const insertSql = `
-            INSERT INTO payments (cardholderName, cardType, cardNumber, pin, expiry, address)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `;
-
-    connection.query(insertSql, [cardholderName, cardType, cardNumber, pin, expiry, address], (err, result) => {
-      if (err) {
-        console.error('Error inserting payment:', err);
-        return res.status(500).json({ error: 'Failed to save payment information' });
-      }
-      res.json({ message: 'Payment information saved successfully (previous entries cleared).' });
-    });
+    res.redirect('/confirmation.html');
   });
+});
+
+app.route('/payment').get((req, res) => {
+    const email = req.session.email || req.query.email;
+    db.getLatestPayment(email).then(payment => {
+      res.json(payment || {});
+    });
+  })
+  .post((req, res) => {
+    const payment = req.body;
+    const email = req.session.email;
+
+    db.savePayment(email, payment).then(() => {
+      res.json({ success: true, message: "Payment info saved successfully." });
+    }).catch(err => {
+      res.status(500).json({ success: false, message: "Failed to save payment info." });
+    });
 });
 

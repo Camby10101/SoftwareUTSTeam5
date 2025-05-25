@@ -299,11 +299,6 @@
             loadOrders();
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadOrders();
-            loadLatestPayment();
-        });
-
         async function loadLatestPayment() {
             try {
                 const res = await fetch('/payment');
@@ -324,6 +319,8 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
+            loadOrders();
+            loadLatestPayment();
             // Load existing payment info
             fetch('/payment')
                 .then(res => res.json())
@@ -363,62 +360,62 @@
             });
         });
 
-        document.addEventListener("DOMContentLoaded", () => {
-            fetchPayments();
-        });
+        // document.addEventListener("DOMContentLoaded", () => {
+        //     fetchPayments();
+        // });
 
-        let allPayments = [];
+        // let allPayments = [];
 
-        function fetchPayments() {
-            fetch('/payment')
-                .then(response => response.json())
-                .then(data => {
-                    allPayments = data;
-                    displayPayments(data);
-                })
-                .catch(err => {
-                    console.error("Failed to fetch payments:", err);
-                });
-        }
+        // function fetchPayments() {
+        //     fetch('/payment')
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             allPayments = data;
+        //             displayPayments(data);
+        //         })
+        //         .catch(err => {
+        //             console.error("Failed to fetch payments:", err);
+        //         });
+        // }
 
-        function displayPayments(payments) {
-            const container = document.getElementById('paymenthistory-container');
-            container.innerHTML = "";
+        // function displayPayments(payments) {
+        //     const container = document.getElementById('paymenthistory-container');
+        //     container.innerHTML = "";
 
-            if (payments.length === 0) {
-                container.innerHTML = "<p>No payments found.</p>";
-                return;
-            }
+        //     if (payments.length === 0) {
+        //         container.innerHTML = "<p>No payments found.</p>";
+        //         return;
+        //     }
 
-            payments.forEach(payment => {
-                const cardDiv = document.createElement("div");
-                cardDiv.classList.add("payment-card");
+        //     payments.forEach(payment => {
+        //         const cardDiv = document.createElement("div");
+        //         cardDiv.classList.add("payment-card");
 
-                cardDiv.innerHTML = `
-                    <p><strong>ID:</strong> #${payment.id}</p>
-                    <p><strong>Name:</strong> ${payment.cardholderName}</p>
-                    <p><strong>Type:</strong> ${payment.cardType}</p>
-                    <p><strong>Card Number:</strong> **** **** **** ${payment.cardNumber.slice(-4)}</p>
-                    <p><strong>Expiry:</strong> ${payment.expiry}</p>
-                    <p><strong>Address:</strong> ${payment.address}</p>
-                    <p><strong>Date:</strong> ${new Date(payment.created_at).toLocaleDateString()}</p>
-                `;
-                container.appendChild(cardDiv);
-            });
-        }
+        //         cardDiv.innerHTML = `
+        //             <p><strong>ID:</strong> #${payment.id}</p>
+        //             <p><strong>Name:</strong> ${payment.cardholderName}</p>
+        //             <p><strong>Type:</strong> ${payment.cardType}</p>
+        //             <p><strong>Card Number:</strong> **** **** **** ${payment.cardNumber.slice(-4)}</p>
+        //             <p><strong>Expiry:</strong> ${payment.expiry}</p>
+        //             <p><strong>Address:</strong> ${payment.address}</p>
+        //             <p><strong>Date:</strong> ${new Date(payment.created_at).toLocaleDateString()}</p>
+        //         `;
+        //         container.appendChild(cardDiv);
+        //     });
+        // }
 
-        function searchPayments() {
-            const idInput = document.getElementById('search-payment-id').value.trim();
-            const dateInput = document.getElementById('search-date').value;
+        // function searchPayments() {
+        //     const idInput = document.getElementById('search-payment-id').value.trim();
+        //     const dateInput = document.getElementById('search-date').value;
 
-            const filtered = allPayments.filter(payment => {
-                const matchesId = idInput === "" || payment.id.toString() === idInput;
-                const matchesDate = dateInput === "" || new Date(payment.created_at).toISOString().split("T")[0] === dateInput;
-                return matchesId && matchesDate;
-            });
+        //     const filtered = allPayments.filter(payment => {
+        //         const matchesId = idInput === "" || payment.id.toString() === idInput;
+        //         const matchesDate = dateInput === "" || new Date(payment.created_at).toISOString().split("T")[0] === dateInput;
+        //         return matchesId && matchesDate;
+        //     });
 
-            displayPayments(filtered);
-        }
+        //     displayPayments(filtered);
+        // }
     </script>
 </body>
 
