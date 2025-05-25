@@ -434,7 +434,7 @@ app.post('/orders/:orderId/submit', (req, res) => {
   });
 });
 
-app.get('/payment', (req, res) => {
+app.get('/latestpayment', (req, res) => {
   const sql = 'SELECT * FROM payments ORDER BY created_at DESC LIMIT 1';
   connection.query(sql, (err, results) => {
     if (err) return res.status(500).json({ error: 'Database error' });
@@ -443,6 +443,14 @@ app.get('/payment', (req, res) => {
     } else {
       res.json({});
     }
+  });
+});
+
+app.get('/payment', (req, res) => {
+  const sql = 'SELECT * FROM payments ORDER BY created_at DESC';
+  connection.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    res.json(results); // return all payments
   });
 });
 
@@ -455,6 +463,15 @@ app.post('/payment', (req, res) => {
     expiry,
     address
   } = req.body;
+
+  console.log('Submitting payment info:', {
+    cardholderName,
+    cardType,
+    cardNumber,
+    pin,
+    expiry,
+    address
+  });
 
   const deleteSql = 'DELETE FROM payments';
   connection.query(deleteSql, (err) => {
