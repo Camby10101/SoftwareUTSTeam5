@@ -473,13 +473,6 @@ app.post('/payment', (req, res) => {
     address
   });
 
-  const deleteSql = 'DELETE FROM payments';
-  connection.query(deleteSql, (err) => {
-    if (err) {
-      console.error('Error clearing payments table:', err);
-      return res.status(500).json({ error: 'Failed to clear old payment information' });
-    }
-
     const insertSql = `
             INSERT INTO payments (cardholderName, cardType, cardNumber, pin, expiry, address)
             VALUES (?, ?, ?, ?, ?, ?)
@@ -492,6 +485,5 @@ app.post('/payment', (req, res) => {
       }
       res.json({ message: 'Payment information saved successfully (previous entries cleared).' });
     });
-  });
 });
 

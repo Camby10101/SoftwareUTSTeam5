@@ -133,7 +133,7 @@ connection.query('CREATE DATABASE IF NOT EXISTS iot', (err) => {
         cardType VARCHAR(50),
         cardNumber VARCHAR(20),
         pin VARCHAR(10),
-        expiry DATE,
+        expiry VARCHAR(10),
         address TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -143,15 +143,15 @@ connection.query('CREATE DATABASE IF NOT EXISTS iot', (err) => {
     console.log('Payments table ready');
   });
   const createOrdersTable = `
-    CREATE TABLE IF NOT EXISTS orders (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id VARCHAR(100) UNIQUE,
-    email VARCHAR(100),
-    status ENUM('saved', 'submitted', 'cancelled') DEFAULT 'saved',
-    cart JSON,
-    total DECIMAL(10, 2),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
+      CREATE TABLE IF NOT EXISTS orders (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_id VARCHAR(100) UNIQUE,
+        email VARCHAR(100),
+        status ENUM('saved', 'submitted', 'cancelled') DEFAULT 'saved',
+        cart JSON,
+        total DECIMAL(10, 2),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
   `;
   connection.query(createOrdersTable, (err) => {
     if (err) throw err;
