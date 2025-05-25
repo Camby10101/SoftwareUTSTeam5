@@ -131,38 +131,58 @@
             document.getElementById('total').value = total;
             }
 
+            // Load the most recent payment info
             fetch('/payment')
-                .then(res => res.json())
+                .then(response => response.json())
                 .then(data => {
-                if (!data || Object.keys(data).length === 0) return;
-
-                document.getElementById('name').value = data.cardholderName || '';
-                document.getElementById('cardType').value = data.cardType || '';
-                document.getElementById('creditCard').value = data.cardNumber || '';
-                document.getElementById('pin').value = data.pin || '';
-                document.getElementById('expiry').value = data.expiry || '';
-                document.getElementById('address').value = data.address || '';
+                if (data.length > 0) {
+                    const latest = data[0];
+                    document.getElementById('name').value = latest.cardholderName || '';
+                    document.getElementById('cardType').value = latest.cardType || '';
+                    document.getElementById('creditCard').value = latest.cardNumber || '';
+                    document.getElementById('pin').value = latest.pin || '';
+                    document.getElementById('expiry').value = latest.expiry || '';
+                    document.getElementById('address').value = latest.address || '';
+                }
                 })
-                .catch(err => console.error('Failed to load payment info:', err));
+                .catch(err => console.error('Failed to load payment data:', err));
+            
+            // Handle form submission
+            document.getElementById('payment-form').addEventListener('submit', (e) => {
+                e.preventDefault(); // prevent default form submission
+
+                const formData = {
+                cardholderName: document.getElementById('name').value,
+                cardType: document.getElementById('cardType').value,
+                cardNumber: document.getElementById('creditCard').value,
+                pin: document.getElementById('pin').value,
+                expiry: document.getElementById('expiry').value,
+                address: document.getElementById('address').value
+                };
+
+                fetch('/payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+                })
+                .then(res => res.json())
+                .then(result => {
+                alert(result.message || 'Payment submitted successfully.');
+                })
+                .catch(err => {
+                console.error('Error submitting payment:', err);
+                alert('Error submitting payment.');
+                });
             });
+        });
 
 
-            document.getElementById('payment-form').addEventListener('submit', async function (e) {
+            document.getElementById('payment-form').addEventListener('submit', async function (ev) {
             e.preventDefault(); // prevent the form from submitting normally
 
-            const fullCard = document.getElementById('creditCard').value.trim();
-
-            if (!/^\d{4,}$/.test(fullCard)) {
-                alert("Please enter a valid card number");
-                return;
-            }
-
-            if (fullCard.includes('*')) {
-                alert("Please re-enter your full card number before submitting.");
-                return;
-            }
-
-                const total = parseFloat(document.getElementById('total-price').textContent); // or innerText
+            const total = parseFloat(document.getElementById('total-price').textContent);
 
 
             const cartData = JSON.parse(localStorage.getItem('cart')) || [];
@@ -175,13 +195,13 @@
             const email = sessionStorage.getItem('email') || 'guest@example.com';
             const orderId = `ORD-${Date.now()}`;
 
-        console.log('Submitting order with:', {
-        orderId,
-        email,
-        status: 'submitted',
-        cartData,
-        total
-        });
+            console.log('Submitting order with:', {
+            orderId,
+            email,
+            status: 'submitted',
+            cartData,
+            total
+            });
 
             // Save the order in the database
             const orderResponse = await fetch('/orders', {
@@ -230,7 +250,6 @@
             });
             }
         });
-
 
     </script>
 </div>

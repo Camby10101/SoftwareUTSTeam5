@@ -133,7 +133,7 @@ connection.query('CREATE DATABASE IF NOT EXISTS iot', (err) => {
         cardType VARCHAR(50),
         cardNumber VARCHAR(20),
         pin VARCHAR(10),
-        expiry VARCHAR(10),
+        expiry DATE,
         address TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
