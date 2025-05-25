@@ -649,6 +649,16 @@ footer li {
     text-align: center;
 }
 
+.paymenthistory-section {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    text-align: center;
+}
+
 .order-history h2 {
     text-align: center;
 }
@@ -778,6 +788,13 @@ footer li {
 
 /* order history */
 .order-search {
+    margin: 1rem 0;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.paymenthistory-search {
     margin: 1rem 0;
     display: flex;
     gap: 0.5rem;
