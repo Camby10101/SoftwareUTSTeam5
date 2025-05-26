@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector(".user-info-form");
 
-    // Load the latest saved details, if any
+    // Load latest payment data into form if present
     const latestPayment = localStorage.getItem("latestPayment");
     if (latestPayment) {
         const data = JSON.parse(latestPayment);
@@ -13,11 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("address").value = data.address || "";
     }
 
-    // Intercept form submission
+    // Save new payment info
     form.addEventListener("submit", (event) => {
-        event.preventDefault(); // prevent actual submission
+        event.preventDefault();
 
-        // Gather form data
         const data = {
             cardholderName: document.getElementById("cardholderName").value,
             cardType: document.getElementById("cardType").value,
@@ -28,13 +27,69 @@ document.addEventListener("DOMContentLoaded", () => {
             timestamp: new Date().toISOString()
         };
 
-        // Save with unique ID (e.g., timestamp-based key)
         const id = "payment_" + Date.now();
         localStorage.setItem(id, JSON.stringify(data));
-
-        // Save as latest
         localStorage.setItem("latestPayment", JSON.stringify(data));
+        alert("Payment information saved locally!");
 
-        alert("Payment information saved to the database :)");
+        // Refresh payment history list
+        renderPaymentHistory();
     });
+
+    // Render all saved payment methods
+    function renderPaymentHistory(filter = {}) {
+        const container = document.getElementById("paymenthistory-container");
+        container.innerHTML = ""; // Clear previous content
+
+        const keys = Object.keys(localStorage).filter(key => key.startsWith("payment_"));
+        if (keys.length === 0) {
+            container.innerHTML = "<p>No payment records found.</p>";
+            return;
+        }
+
+        const filteredKeys = keys.filter(key => {
+            const record = JSON.parse(localStorage.getItem(key));
+
+            const matchesId = filter.id ? key.includes(filter.id) : true;
+            const matchesDate = filter.date
+                ? record.timestamp && record.timestamp.startsWith(filter.date)
+                : true;
+
+            return matchesId && matchesDate;
+        });
+
+        if (filteredKeys.length === 0) {
+            container.innerHTML = "<p>No matching payment records.</p>";
+            return;
+        }
+
+        filteredKeys.sort().reverse().forEach(key => {
+            const record = JSON.parse(localStorage.getItem(key));
+            const div = document.createElement("div");
+            div.className = "payment-record";
+            div.innerHTML = `
+                <strong>#${key.replace("payment_", "")}</strong><br>
+                Name: ${record.cardholderName}<br>
+                Card: ${record.cardType} ****${record.cardNumber.slice(-4)}<br>
+                Expiry: ${record.expiry}<br>
+                Date Saved: ${new Date(record.timestamp).toLocaleString()}<br>
+                Address: ${record.address}<br><br>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // Expose search function globally for button onclick
+    window.searchPayments = function () {
+        const idInput = document.getElementById("search-payment-id").value.trim();
+        const dateInput = document.getElementById("search-date").value.trim();
+
+        renderPaymentHistory({
+            id: idInput,
+            date: dateInput
+        });
+    };
+
+    // Initial render
+    renderPaymentHistory();
 });

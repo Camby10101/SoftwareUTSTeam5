@@ -182,7 +182,7 @@
 
 
             document.getElementById('payment-form').addEventListener('submit', async function (ev) {
-            e.preventDefault(); // prevent the form from submitting normally
+            e.preventDefault();
 
             const total = parseFloat(document.getElementById('total-price').textContent);
 
@@ -251,6 +251,26 @@
                 container.appendChild(div);
             });
             }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("payment-form");
+
+            // Load the latest payment data if it exists
+            const latestPayment = localStorage.getItem("latestPayment");
+            if (latestPayment) {
+                const data = JSON.parse(latestPayment);
+
+                // Map saved fields to this form's fields
+                document.getElementById("name").value = data.cardholderName || "";
+                document.getElementById("cardType").value = data.cardType || "";
+                document.getElementById("creditCard").value = data.cardNumber || "";
+                document.getElementById("pin").value = data.pin || "";
+                document.getElementById("expiry").value = data.expiry || "";
+                document.getElementById("address").value = data.address || "";
+            }
+
+            // Optionally, handle submit logic here if needed (for now, browser submits as-is)
         });
 
     </script>
