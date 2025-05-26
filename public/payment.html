@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoTBay - Home</title>
     <link rel="stylesheet" type="text/css" href="CSS/styles.css">
+    <script src="payment-record.js"></script>
 </head>
 <div>
     <header class="header-container">
@@ -148,34 +150,34 @@
                 .catch(err => console.error('Failed to load payment data:', err));
             
             // Handle form submission
-            document.getElementById('payment-form').addEventListener('submit', (e) => {
-                e.preventDefault(); // prevent default form submission
+            // document.getElementById('payment-form').addEventListener('submit', (e) => {
+            //     e.preventDefault(); // prevent default form submission
 
-                const formData = {
-                cardholderName: document.getElementById('name').value,
-                cardType: document.getElementById('cardType').value,
-                cardNumber: document.getElementById('creditCard').value,
-                pin: document.getElementById('pin').value,
-                expiry: document.getElementById('expiry').value,
-                address: document.getElementById('address').value
-                };
+            //     const formData = {
+            //     cardholderName: document.getElementById('name').value,
+            //     cardType: document.getElementById('cardType').value,
+            //     cardNumber: document.getElementById('creditCard').value,
+            //     pin: document.getElementById('pin').value,
+            //     expiry: document.getElementById('expiry').value,
+            //     address: document.getElementById('address').value
+            //     };
 
-                fetch('/payment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-                })
-                .then(res => res.json())
-                .then(result => {
-                alert(result.message || 'Payment submitted successfully.');
-                })
-                .catch(err => {
-                console.error('Error submitting payment:', err);
-                alert('Error submitting payment.');
-                });
-            });
+            //     fetch('/payment', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify(formData)
+            //     })
+            //     .then(res => res.json())
+            //     .then(result => {
+            //     alert(result.message || 'Payment submitted successfully.');
+            //     })
+            //     .catch(err => {
+            //     console.error('Error submitting payment:', err);
+            //     alert('Error submitting payment.');
+            //     });
+            // });
         });
 
 
