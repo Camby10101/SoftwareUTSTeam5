@@ -212,6 +212,11 @@
             const total = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
             const orderId = `ORD-${Date.now()}`;
 
+            if(!email) {
+                alert('You must be logged in to access this feature.'); 
+                return;
+            }
+
             const res = await fetch('/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -229,7 +234,7 @@
                 localStorage.removeItem('cart');
                 window.location.href = 'user.html';
             } else {
-                alert('You must be logged in to access this feature.');
+                alert('Failed to save order.');
             }
         });
 
