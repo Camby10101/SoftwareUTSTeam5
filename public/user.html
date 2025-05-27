@@ -294,6 +294,8 @@
             window.location.href = 'cart.html';
         }
 
+
+
         async function cancelOrder(orderId) {
             await fetch(`/orders/${orderId}/cancel`, { method: 'POST' });
             loadOrders();

@@ -217,28 +217,35 @@
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
             const email = sessionStorage.getItem('email');
             const total = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
-            const orderId = `ORD-${Date.now()}`;
+            //const orderId = `ORD-${Date.now()}`;
+            const restoredOrderId = sessionStorage.getItem('restoredOrderId');
 
             if (!email) {
                 alert('You must be logged in to access this feature.');
                 return;
             }
 
-            const res = await fetch('/orders', {
-                method: 'POST',
+            const payload = {
+                orderId: restoredOrderId || `ORD-${Date.now()}`,
+                email,
+                status: 'saved',
+                cartData: cart,
+                total
+            };
+
+            const method = restoredOrderId ? 'PUT' : 'POST';
+            const endpoint = restoredOrderId ? `/orders/${restoredOrderId}` : '/orders';
+
+            const res = await fetch(endpoint, {
+                method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    orderId,
-                    email,
-                    status: 'saved',
-                    cartData: cart,
-                    total
-                })
+                body: JSON.stringify(payload)
             });
 
             if (res.ok) {
                 alert('Order saved successfully!');
                 localStorage.removeItem('cart');
+                sessionStorage.removeItem('restoredOrderId');
                 window.location.href = 'user.html';
             } else {
                 alert('Failed to save order.');

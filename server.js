@@ -419,6 +419,42 @@ app.get('/orders/:orderId', (req, res) => {
 });
 
 
+app.put('/orders/:orderId', (req, res) => {
+  const { orderId } = req.params;
+  const { email, cartData, total, status } = req.body;
+
+  if (!email || !cartData || !total || !status) {
+    return res.status(400).json({ success: false, message: 'Missing order data' });
+  }
+
+  let cartJSON;
+  try {
+    cartJSON = JSON.stringify(cartData);
+  } catch (err) {
+    return res.status(400).json({ success: false, message: 'Invalid cart data' });
+  }
+
+  const query = `
+    UPDATE orders 
+    SET cart = ?, total = ?, status = ? 
+    WHERE order_id = ? AND email = ? AND status = 'saved'
+  `;
+
+  connection.query(query, [cartJSON, total, status, orderId, email], (err, result) => {
+    if (err) {
+      console.error('Error updating order:', err);
+      return res.status(500).json({ success: false });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'Saved order not found or already submitted' });
+    }
+
+    res.json({ success: true, message: 'Saved order updated' });
+  });
+});
+
+
 app.post('/orders/:orderId/cancel', (req, res) => {
   const { orderId } = req.params;
   const query = `UPDATE orders SET status = 'cancelled' WHERE order_id = ? AND status = 'saved'`;
