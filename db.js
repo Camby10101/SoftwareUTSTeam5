@@ -56,7 +56,9 @@ connection.query('CREATE DATABASE IF NOT EXISTS iot', (err) => {
       VALUES 
         ('Alice Johnson', 'alice@example.com', '1234567890', 'password123'),
         ('Bob Smith', 'bob@example.com', '0987654321', 'mypassword'),
-        ('Charlie Brown', 'charlie@example.com', '5551234567', 'charlie123')
+        ('Charlie Brown', 'charlie@example.com', '5551234567', 'charlie123'),
+        ('test', 'test@example.com', '111111111', 'password'),
+        ('me', 'me@example.com', '222222222', '123')
     `;
         connection.query(insertUsers, (err) => {
           if (err) throw err;
@@ -114,7 +116,22 @@ connection.query('CREATE DATABASE IF NOT EXISTS iot', (err) => {
             ('Smart Light Bulb', 'Wi-Fi enabled smart bulb', 29.99, 'images/bulb.png', 200),
             ('IoT Gateway Hub', 'Central hub for all IoT devices', 99.99, 'images/gateway-hub.png', 75),
             ('Motion Detector', 'Infrared motion detector for home automation', 39.99, 'images/motion-detector.png', 120),
-            ('Smart Plug', 'Control appliances remotely', 19.99, 'images/smart-plug.png', 300)
+            ('Smart Plug', 'Control appliances remotely', 19.99, 'images/smart-plug.png', 300),
+            ('Smart Fridge', 'Put your food in it', 399.99, 'images/fridge.png', 20),
+            ('Smart Watch', 'Great for fitness tracking', 77.00, 'images/watch.png', 40),
+            ('Amazon Echo', 'Smart speakers', 100, 'images/echo.png', 0),
+            ('Dash Cam', 'Capture detailed video', 429.00, 'images/dash.png', 60),
+            ('Google Nest Hub', 'Manage your smart home', 125.00, 'images/hub.png', 35),
+            ('Mini Drone', 'The most advanced mini-camera drone to date', 949.00, 'images/drone.png', 10),
+            ('Modem Router', 'Connect wirelessly to networks', 49.99, 'images/router.png', 150),
+            ('4K LED TV', 'Vibrant pictures', 300.00, 'images/tv.png', 200),
+            ('Air Quality Monitor', 'Control indoor pollution', 320.94, 'images/qual.png', 350),
+            ('Smart Door Lock', 'Protect your home', 579.99, 'images/lock.png', 100),
+            ('Universal Remote', 'One remote for everything', 25.89, 'images/remote.png', 50),
+            ('Desktop Motherboard', 'PC part', 359.00, 'images/motherboard.png', 250),
+            ('Camera', 'Capture photos', 999.00, 'images/camera.png', 70),
+            ('Air Purifier', 'Compact air purifier', 199.00, 'images/purifier.png', 50),
+            ('Smart Thermostat', 'Display temperatures in your house', 299.99, 'images/thermo.png', 90)
           `;
           connection.query(insertProducts, (err) => {
             if (err) throw err;
