@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const id = "payment_" + Date.now();
         localStorage.setItem(id, JSON.stringify(data));
         localStorage.setItem("latestPayment", JSON.stringify(data));
-        alert("Payment information saved locally!");
+        alert("Payment information saved :)");
 
         // Refresh payment history list
         renderPaymentHistory();
