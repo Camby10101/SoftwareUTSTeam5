@@ -36,8 +36,10 @@
         </nav>
     </header>
 
-    <div id="product-list" class="product-container">
-
+    <div class="shop-container">
+        <h2>Shop</h2>
+        <div id="product-list" class="product-grid">
+        </div>
     </div>
 
 
@@ -91,7 +93,7 @@
                 const data = await response.json();
 
                 if (data.success && Array.isArray(data.products)) {
-                    const products = data.products; 
+                    const products = data.products;
                     allProducts = products;
                     const container = document.getElementById('product-list');
 
@@ -99,13 +101,15 @@
                         const div = document.createElement('div');
                         div.className = 'product-item';
                         div.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}" width="150">
+                        <div class="product-card">
+                    <img src="${product.image}" alt="${product.name}" width="150" class="product-image">
                     <h3>${product.name}</h3>
                     <p>${product.description}</p>
                     <p><strong>$${parseFloat(product.price).toFixed(2)}</strong></p>
                     <p>In stock: ${product.stock}</p>
                     <input type="number" id="qty-${product.id}" min="1" max="${product.stock}" value="1" />
-                    <button onclick="addToCart(${product.id}, ${product.stock})">Add to Cart</button>
+                    <button class="search-button" onclick="addToCart(${product.id}, ${product.stock})">Add to Cart</button>
+                    </div>
                 `;
                         container.appendChild(div);
                     });
