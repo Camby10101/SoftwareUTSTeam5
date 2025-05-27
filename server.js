@@ -351,10 +351,15 @@ app.post('/orders', (req, res) => {
 
 app.get('/orders', (req, res) => {
   const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ success: false, message: 'Email is required' });
+  }
+
   const query = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
 
   connection.execute(query, [email], (err, results) => {
-    if (err) return res.status(500).json({ success: false });
+    if (err) return res.status(500).json({ success: false, message: 'Database error' });
     res.json({ success: true, orders: results });
   });
 });
@@ -483,11 +488,11 @@ app.post('/payment', (req, res) => {
 });
 
 app.route('/payment').get((req, res) => {
-    const email = req.session.email || req.query.email;
-    db.getLatestPayment(email).then(payment => {
-      res.json(payment || {});
-    });
-  })
+  const email = req.session.email || req.query.email;
+  db.getLatestPayment(email).then(payment => {
+    res.json(payment || {});
+  });
+})
   .post((req, res) => {
     const payment = req.body;
     const email = req.session.email;
@@ -497,5 +502,5 @@ app.route('/payment').get((req, res) => {
     }).catch(err => {
       res.status(500).json({ success: false, message: "Failed to save payment info." });
     });
-});
+  });
 

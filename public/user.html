@@ -318,6 +318,12 @@
             }
         }
 
+        document.addEventListener("DOMContentLoaded", () => {
+            loadOrders();
+            loadLatestPayment();
+        });
+
+
         // document.addEventListener("DOMContentLoaded", () => {
         //     loadOrders();
         //     loadLatestPayment();
