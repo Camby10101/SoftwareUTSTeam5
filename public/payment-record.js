@@ -73,9 +73,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 Card: ${record.cardType} ****${record.cardNumber.slice(-4)}<br>
                 Expiry: ${record.expiry}<br>
                 Date Saved: ${new Date(record.timestamp).toLocaleString()}<br>
-                Address: ${record.address}<br><br>
+                Address: ${record.address}<br>
+                <button class="delete-button" data-key="${key}">Delete</button>
+                <br><br>
             `;
             container.appendChild(div);
+        });
+
+        const deleteButtons = container.querySelectorAll(".delete-button");
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                const keyToDelete = button.getAttribute("data-key");
+                localStorage.removeItem(keyToDelete);
+
+                // If the deleted item was the latest, remove or update the latestPayment
+                const latest = localStorage.getItem("latestPayment");
+                if (latest) {
+                    const latestObj = JSON.parse(latest);
+                    const deleted = JSON.parse(localStorage.getItem(keyToDelete));
+                    if (latestObj.timestamp === deleted?.timestamp) {
+                        localStorage.removeItem("latestPayment");
+                    }
+                }
+
+                renderPaymentHistory(); // Refresh the list
+            });
         });
     }
 
