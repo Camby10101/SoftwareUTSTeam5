@@ -168,7 +168,7 @@
 
             if (qty > product.stock) {
                 alert(`${product.name} only has ${product.stock} in stock.`);
-                checkoutBtn.disabled = true; 
+                checkoutBtn.disabled = true;
                 return;
             }
 
@@ -180,28 +180,35 @@
                 return prod && item.quantity > prod.stock;
             });
 
-            checkoutBtn.disabled = invalid; 
+            checkoutBtn.disabled = invalid;
 
-            loadCart(); 
+            loadCart();
         }
 
         function removeFromCart(index) {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
-            loadCart(); 
+            loadCart();
             localStorage.setItem('orderTotal', cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2));
         }
 
         window.onload = loadCart;
 
-        document.getElementById('cancel-btn').addEventListener('click', () => {
+        document.getElementById('cancel-btn').addEventListener('click', async () => {
+            const restoredOrderId = localStorage.getItem("restoredOrderId");
+
+            if (restoredOrderId) {
+                await fetch(`/orders/${restoredOrderId}/cancel`, {
+                    method: 'POST'
+                });
+            }
             const confirmCancel = confirm('Are you sure you want to cancel your order? This will remove all items from your cart.');
 
             if (confirmCancel) {
                 localStorage.removeItem('cart');
                 localStorage.removeItem('orderTotal');
-                loadCart(); 
+                loadCart();
                 alert('Your order has been cancelled and the cart has been cleared.');
             }
         });
@@ -212,8 +219,8 @@
             const total = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0);
             const orderId = `ORD-${Date.now()}`;
 
-            if(!email) {
-                alert('You must be logged in to access this feature.'); 
+            if (!email) {
+                alert('You must be logged in to access this feature.');
                 return;
             }
 
@@ -251,7 +258,7 @@
 
                 if (item.quantity > product.stock) {
                     alert(`You have ${item.quantity} of "${product.name}" in your cart, but only ${product.stock} in stock.`);
-                    return; 
+                    return;
                 }
             }
 
